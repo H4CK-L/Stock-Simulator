@@ -1,5 +1,45 @@
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
 public class Shop extends javax.swing.JFrame {
-    public Shop() {
+    private Client client;
+    private int countMin = 30;
+    private int countSec = 0;
+    private volatile boolean running = true;
+
+    private class TimerThread extends Thread {
+        @Override
+        public void run() {
+            while (running) {
+                try {
+                    Thread.sleep(1000); // 1초 대기
+                    if (countSec == 0) {
+                        if (countMin == 0) {
+                            countMin = 30;
+                            countSec = 0;
+                        } else {
+                            countMin--;
+                            countSec = 59;
+                        }
+                    } else {
+                        countSec--;
+                    }
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateTimerLabel();
+                        }
+                    });
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public Shop(Client client) {
+        this.client = client;
         initComponents();
     }
 
@@ -158,7 +198,9 @@ public class Shop extends javax.swing.JFrame {
         );
 
         jLabel2.setFont(new java.awt.Font("한컴 고딕", 1, 13)); // NOI18N
-        jLabel2.setText("상점 갱신까지 남은 시간 : 00분");
+        TimerThread timerThread = new TimerThread(); // TimerThread 객체 생성
+        timerThread.start(); // 타이머 시작
+        jLabel2.setText(String.format("상점 갱신까지 남은 시간 : %02d분 %02d초", countMin, countSec));
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
@@ -279,33 +321,18 @@ public class Shop extends javax.swing.JFrame {
     }
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        this.setVisible(false);
+        client.setVisible(true);
     }
 
-    public static void main(String args[]) {
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Shop.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Shop.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Shop.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Shop.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Shop().setVisible(true);
-            }
-        });
+    private void updateTimerLabel() {
+        jLabel2.setText(String.format("상점 갱신까지 남은 시간 : %02d분 %02d초", countMin, countSec));
     }
+
+    private void stopTimerThread() {
+        running = false;
+    }
+
 
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;

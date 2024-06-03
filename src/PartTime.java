@@ -1,12 +1,53 @@
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+
 public class PartTime extends javax.swing.JFrame {
-    public PartTime() {
+    private Client client;
+    private int countMin = 30;
+    private int countSec = 0;
+    private volatile boolean running = true;
+
+    public PartTime(Client client) {
+        this.client = client;
         initComponents();
     }
+
+    public class TimerThread extends Thread {
+        @Override
+        public void run() {
+            while (running) {
+                try {
+                    Thread.sleep(1000); // 1초 대기
+                    if (countSec == 0) {
+                        if (countMin == 0) {
+                            countMin = 30;
+                            countSec = 0;
+                        } else {
+                            countMin--;
+                            countSec = 59;
+                        }
+                    } else {
+                        countSec--;
+                    }
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateTimerLabel();
+                        }
+                    });
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        backButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -21,13 +62,13 @@ public class PartTime extends javax.swing.JFrame {
         jPanel1.setFont(new java.awt.Font("한컴 고딕", 1, 14)); // NOI18N
         jPanel1.setPreferredSize(new java.awt.Dimension(761, 524));
 
-        jButton1.setBackground(new java.awt.Color(140, 255, 187));
-        jButton1.setFont(new java.awt.Font("한컴 고딕", 1, 14)); // NOI18N
-        jButton1.setText("뒤로가기");
-        jButton1.setToolTipText("");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        backButton.setBackground(new java.awt.Color(140, 255, 187));
+        backButton.setFont(new java.awt.Font("한컴 고딕", 1, 14)); // NOI18N
+        backButton.setText("뒤로가기");
+        backButton.setToolTipText("");
+        backButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                backButtonActionPerformed(evt);
             }
         });
 
@@ -55,7 +96,9 @@ public class PartTime extends javax.swing.JFrame {
         jLabel2.setText("알바 가능 횟수 : 0");
 
         jLabel3.setFont(new java.awt.Font("한컴 고딕", 1, 14)); // NOI18N
-        jLabel3.setText("알바 횟수 충전까지 남은 시각 : 00분");
+        TimerThread timerThread = new TimerThread(); // TimerThread 객체 생성
+        timerThread.start(); // 타이머 시작
+        jLabel3.setText(String.format("상점 갱신까지 남은 시간 : %02d분 %02d초", countMin, countSec));
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jComboBox1.setSelectedIndex(-1);
@@ -99,7 +142,7 @@ public class PartTime extends javax.swing.JFrame {
                                                 .addGap(9, 9, 9)
                                                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                                .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addContainerGap(174, Short.MAX_VALUE)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -118,7 +161,7 @@ public class PartTime extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))
                         .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addContainerGap()
@@ -158,40 +201,24 @@ public class PartTime extends javax.swing.JFrame {
         // TODO add your handling code here:
     }
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+    private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        this.setVisible(false);
+        client.setVisible(true);
     }
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
     }
 
-    public static void main(String args[]) {
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(PartTime.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(PartTime.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(PartTime.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(PartTime.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new PartTime().setVisible(true);
-            }
-        });
+    private void updateTimerLabel() {
+        jLabel3.setText(String.format("상점 갱신까지 남은 시간 : %02d분 %02d초", countMin, countSec));
     }
 
-    private javax.swing.JButton jButton1;
+    private void stopTimerThread() {
+        running = false;
+    }
+
+    private javax.swing.JButton backButton;
     private javax.swing.JButton jButton2;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
