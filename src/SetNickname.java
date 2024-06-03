@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.event.*;
 import javax.swing.event.*;
 import java.awt.*;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class SetNickname extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
@@ -126,7 +128,17 @@ public class SetNickname extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "닉네임 조건이 올바르지 않습니다!!\n조건 : 영어 대소문자, 숫자로 조합된 10글자","", JOptionPane.ERROR_MESSAGE);
         }
         else {
-            System.out.println("닉네임이 유효합니다: " + input);
+            String filePath = System.getProperty("user.dir") + "/database.txt";
+            try {
+                // 파일에 닉네임 저장
+                FileWriter writer = new FileWriter(filePath);
+                writer.write(input);
+                writer.close();
+                JOptionPane.showMessageDialog(this, "닉네임이 저장되었습니다.", "", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IOException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "닉네임을 저장하는 도중 오류가 발생했습니다.", "", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 }
