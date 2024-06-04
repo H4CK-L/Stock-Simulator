@@ -5,9 +5,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.*;
+import java.io.*;
 
 public class Client extends javax.swing.JFrame {
     private Connect connect;
+    private User user;
     private LocalDateTime now;
     private DateTimeFormatter formatter;
     private String formattedDateTime;
@@ -35,11 +37,56 @@ public class Client extends javax.swing.JFrame {
                     showSetNickname();
                 }
                 else{
+                    user = new User("database.txt");
+                    System.out.println("User Name : " + user.getName());
+                    List<Sector> sectors = new ArrayList<>();
+                    sectors.add(new Sector("Technology"));
+                    sectors.add(new Sector("Finance"));
+                    sectors.add(new Sector("Healthcare"));
+                    readStocksFromFile("stock.txt", sectors);
+                    for (Sector sector : sectors) {
+                        System.out.println("Sector: " + sector.getName());
+                        for (Stock stock : sector.getStocks()) {
+                            System.out.println("\t" + stock);
+                        }
+                    }
                     initComponents();
                     uiManager = new UIManager(Client.this);
                 }
             }
         });
+    }
+
+    public static void readStocksFromFile(String filename, List<Sector> sectors) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 3) {
+                    String name = parts[0].trim();
+                    double price = Double.parseDouble(parts[1].trim());
+                    String sectorName = parts[2].trim();
+
+                    Stock stock = new Stock(name, price);
+                    addStockToSector(sectorName, stock, sectors);
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading from file: " + e.getMessage());
+        }
+    }
+
+    private static void addStockToSector(String sectorName, Stock stock, List<Sector> sectors) {
+        for (Sector sector : sectors) {
+            if (sector.getName().equalsIgnoreCase(sectorName)) {
+                sector.addStock(stock);
+                return;
+            }
+        }
+        // If the sector does not exist, create it and add the stock
+        Sector newSector = new Sector(sectorName);
+        newSector.addStock(stock);
+        sectors.add(newSector);
     }
 
     public void showSetNickname(){
