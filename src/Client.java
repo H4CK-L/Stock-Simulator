@@ -43,7 +43,7 @@ public class Client extends javax.swing.JFrame {
                     sectors.add(new Sector("Technology"));
                     sectors.add(new Sector("Finance"));
                     sectors.add(new Sector("Healthcare"));
-                    readStocksFromFile("stock.txt", sectors);
+                    readStocksFromFile("stock.txt", sectors); // 주식 파일 불러오기
                     for (Sector sector : sectors) {
                         System.out.println("Sector: " + sector.getName());
                         for (Stock stock : sector.getStocks()) {

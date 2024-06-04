@@ -2,7 +2,7 @@ import java.util.*;
 
 public class Sector {
     private String name;
-    private List<Stock> stocks;
+    private List<Stock> stocks; // 분야 임시 제작
 
     public Sector(String name) {
         this.name = name;

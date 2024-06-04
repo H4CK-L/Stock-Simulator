@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 public class User {
-    private String name;
+    private String name; // 닉네임 불러오기 성공
     private int Money;
     private int partTimeCount;
     public User(String name){

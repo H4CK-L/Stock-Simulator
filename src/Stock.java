@@ -1,6 +1,6 @@
 public class Stock {
     private String name;
-    private double price;
+    private double price; // Stock 임시 제작
 
     public Stock(String name, double price) {
         this.name = name;
