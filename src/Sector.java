@@ -25,11 +25,50 @@ public class Sector {
         this.stocks.add(stock);
     }
 
-    @Override
-    public String toString() {
-        return "Sector{" +
-                "name='" + name + '\'' +
-                ", stocks=" + stocks +
-                '}';
+    public Sector updateStockPrices(Sector sector) {
+        Random random = new Random();
+        int change = 0;
+        for (Stock stock : sector.getStocks()) {
+            if(stock.getPrice() <= 10){
+                change = random.nextInt(51);
+            }
+            else {
+                change = random.nextInt((stock.getPrice() / 10) + 1); // Random change between 0 and 20
+            }
+            boolean increase = random.nextBoolean(); // Randomly decide to increase or decrease
+            if(change == 0){
+                stock.setStat(false);
+                stock.setNotChange(true);
+            }
+            else {
+                stock.setPrevPrice(stock.getPrice());
+                if (increase) {
+                    stock.setPrice(stock.getPrice() + change);
+                    stock.setStat(true); // Increase
+                }
+                else {
+                    stock.setPrice(stock.getPrice() - change);
+                    stock.setStat(false); // Decrease
+                }
+                stock.setNotChange(false);
+            }
+
+            if(stock.getPrice() <= 0){
+                resetPrice(stock);
+                continue;
+            }
+
+            stock.setChangedPrice();
+        }
+
+        return sector;
+    }
+
+    public Stock resetPrice(Stock stock) {
+        stock.setPrice(1000);
+        stock.setStat(false);
+        stock.setNotChange(true);
+        stock.setDelisting(true);
+        return stock;
     }
 }

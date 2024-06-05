@@ -7,10 +7,16 @@ public class PartTime extends javax.swing.JFrame {
     private int countMin = 30;
     private int countSec = 0;
     private volatile boolean running = true;
+    private User user;
 
     public PartTime(Client client) {
         this.client = client;
         initComponents();
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+        jLabel2.setText("알바 가능 횟수 : " + user.getPartTimeCount());
     }
 
     public class TimerThread extends Thread {
@@ -23,6 +29,14 @@ public class PartTime extends javax.swing.JFrame {
                         if (countMin == 0) {
                             countMin = 30;
                             countSec = 0;
+                            if(user.getPartTimeCount() < 3) {
+                                user.setPartTimeCount(user.getPartTimeCount() + 1);
+                                System.out.println(user.getPartTimeCount());
+                                jLabel2.setText("알바 가능 횟수 : " + user.getPartTimeCount());
+                            }
+                            else{
+                                continue;
+                            }
                         } else {
                             countMin--;
                             countSec = 59;
@@ -93,12 +107,11 @@ public class PartTime extends javax.swing.JFrame {
         );
 
         jLabel2.setFont(new java.awt.Font("한컴 고딕", 1, 14)); // NOI18N
-        jLabel2.setText("알바 가능 횟수 : 0");
 
         jLabel3.setFont(new java.awt.Font("한컴 고딕", 1, 14)); // NOI18N
         TimerThread timerThread = new TimerThread(); // TimerThread 객체 생성
         timerThread.start(); // 타이머 시작
-        jLabel3.setText(String.format("상점 갱신까지 남은 시간 : %02d분 %02d초", countMin, countSec));
+        jLabel3.setText(String.format("알바 횟수 추가까지 남은 시간 : %02d분 %02d초", countMin, countSec));
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jComboBox1.setSelectedIndex(-1);
