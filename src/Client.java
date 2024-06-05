@@ -6,65 +6,64 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.*;
 import java.io.*;
+import java.text.*;
 
 public class Client extends javax.swing.JFrame {
-    private Connect connect;
+    private Sector sector;
+    private List<Sector> sectors;
     private User user;
+    private StringBuilder stockContent;
     private LocalDateTime now;
     private DateTimeFormatter formatter;
     private String formattedDateTime;
     private int countNewsMin = 30;
     private int countNewsSec = 0;
-    private int stockMin = 3;
-    private int stockSec = 0;
+    private int stockMin = 0;
+    private int stockSec = 10;
     private volatile boolean running = true;
     private UIManager uiManager;
+    private Assets assets;
 
-    public Client() {
-        connecting();
-    }
+    public Client() {}
 
-    private void connecting(){
-        connect = new Connect();
-        connect.setVisible(true);
-        connect.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // 창이 닫힐 때 자원을 해제하도록 설정
-        connect.addWindowListener(new WindowAdapter() {
+    private void connecting(Client client){
+        uiManager = new UIManager(Client.this);
+        uiManager.getConnect().setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // 창이 닫힐 때 자원을 해제하도록 설정
+        uiManager.getConnect().addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
                 // Connect 창이 닫힐 때 호출될 메소드
                 File file = new File("database.txt");
                 if(!file.exists()){
-                    showSetNickname();
+                    uiManager.viewSetNickname();
+                    user = new User("database.txt");
+                    assets = new Assets(user);
+                    uiManager.setAssets(assets);
                 }
                 else{
                     user = new User("database.txt");
-                    System.out.println("User Name : " + user.getName());
-                    List<Sector> sectors = new ArrayList<>();
-                    sectors.add(new Sector("Technology"));
-                    sectors.add(new Sector("Finance"));
-                    sectors.add(new Sector("Healthcare"));
+                    assets = new Assets(user);
+                    uiManager.setAssets(assets);
+                    sectors = new ArrayList<>();
+                    sectors.add(new Sector("기술"));
+                    sectors.add(new Sector("예술"));
+                    sectors.add(new Sector("게임"));
                     readStocksFromFile("stock.txt", sectors); // 주식 파일 불러오기
-                    for (Sector sector : sectors) {
-                        System.out.println("Sector: " + sector.getName());
-                        for (Stock stock : sector.getStocks()) {
-                            System.out.println("\t" + stock);
-                        }
-                    }
-                    initComponents();
-                    uiManager = new UIManager(Client.this);
+                    sector = sectors.get(2);
+                    initComponents(client);
                 }
             }
         });
     }
 
-    public static void readStocksFromFile(String filename, List<Sector> sectors) {
+    public void readStocksFromFile(String filename, List<Sector> sectors) {
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
                 if (parts.length == 3) {
                     String name = parts[0].trim();
-                    double price = Double.parseDouble(parts[1].trim());
+                    int price = Integer.parseInt(parts[1].trim());
                     String sectorName = parts[2].trim();
 
                     Stock stock = new Stock(name, price);
@@ -76,7 +75,7 @@ public class Client extends javax.swing.JFrame {
         }
     }
 
-    private static void addStockToSector(String sectorName, Stock stock, List<Sector> sectors) {
+    private void addStockToSector(String sectorName, Stock stock, List<Sector> sectors) {
         for (Sector sector : sectors) {
             if (sector.getName().equalsIgnoreCase(sectorName)) {
                 sector.addStock(stock);
@@ -84,18 +83,13 @@ public class Client extends javax.swing.JFrame {
             }
         }
         // If the sector does not exist, create it and add the stock
-        Sector newSector = new Sector(sectorName);
-        newSector.addStock(stock);
-        sectors.add(newSector);
-    }
-
-    public void showSetNickname(){
-        SetNickname setNickname = new SetNickname();
-        setNickname.setVisible(true);
+        sector = new Sector(sectorName);
+        sector.addStock(stock);
+        sectors.add(sector);
     }
 
     @SuppressWarnings("unchecked")
-    private void initComponents()  {
+    private void initComponents(Client client)  {
         now = LocalDateTime.now();
         formatter = DateTimeFormatter.ofPattern("hh : mm : ss a", Locale.US);
         formattedDateTime = now.format(formatter);
@@ -105,9 +99,11 @@ public class Client extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         buyStock = new javax.swing.JButton();
         sellStock = new javax.swing.JButton();
-        selectStock = new javax.swing.JButton();
+        selectStock = new javax.swing.JToggleButton();
+        stockComboBox = new JComboBox<String>();
         saveButton = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
+        stockPrice = new javax.swing.JLabel();
         shopButton = new javax.swing.JButton();
         partTimeButton = new javax.swing.JButton();
         assetsButton = new javax.swing.JButton();
@@ -302,13 +298,23 @@ public class Client extends javax.swing.JFrame {
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
                 jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 580, Short.MAX_VALUE)
+                        .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(stockPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 566, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(31, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
                 jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 258, Short.MAX_VALUE)
+                        .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(stockPrice, javax.swing.GroupLayout.DEFAULT_SIZE, 246, Short.MAX_VALUE)
+                                .addContainerGap())
         );
 
+        changeStockContent();
+
+        stockPrice.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        stockPrice.setFont(new java.awt.Font("한컴 고딕", 1, 14));
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -336,7 +342,7 @@ public class Client extends javax.swing.JFrame {
         jPanel6.setBackground(new java.awt.Color(250, 250, 250));
 
         jLabel2.setFont(new java.awt.Font("한컴 고딕", 1, 14)); // NOI18N
-        TimerThread timerThread = new TimerThread(); // TimerThread 객체 생성
+        TimerThread timerThread = new TimerThread(sectors); // TimerThread 객체 생성
         timerThread.start(); // 타이머 시작
         jLabel2.setText(String.format("Daily News! | 신문 갱신까지 남은 시간 : %02d분 %02d초", countNewsMin, countNewsSec));
 
@@ -376,6 +382,31 @@ public class Client extends javax.swing.JFrame {
                                 .addContainerGap(9, Short.MAX_VALUE))
         );
 
+        stockComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { sectors.get(0).getName(), sectors.get(1).getName(), sectors.get(2).getName()}));
+        stockComboBox.setSelectedIndex(-1);
+        stockComboBox.setVisible(false);
+        stockComboBox.addActionListener(new java.awt.event.ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                int selectedIndex = stockComboBox.getSelectedIndex();
+                switch (selectedIndex) {
+                    case 0:
+                        sector = sectors.get(selectedIndex);
+                        changeStockContent();
+                        break;
+                    case 1:
+                        sector = sectors.get(selectedIndex);
+                        changeStockContent();
+                        break;
+                    case 2:
+                        sector = sectors.get(selectedIndex);
+                        changeStockContent();
+                        break;
+                }
+                stockComboBoxActionPerformed(evt);
+            }
+            });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -390,12 +421,17 @@ public class Client extends javax.swing.JFrame {
                                         .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(dataDeleteButton, javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(reloadNews, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(15, 15, 15))
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(dataDeleteButton, javax.swing.GroupLayout.Alignment.TRAILING)
+                                                        .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(reloadNews, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                                .addGap(6, 6, 6)
+                                                .addComponent(stockComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(17, 17, 17))
         );
         jPanel1Layout.setVerticalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -413,6 +449,8 @@ public class Client extends javax.swing.JFrame {
                                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(stockComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                 .addComponent(reloadNews, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGap(58, 58, 58))
@@ -440,7 +478,9 @@ public class Client extends javax.swing.JFrame {
                                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        pack();
+        client.pack();
+        client.setVisible(true);
+        client.setLocationRelativeTo(null);
     }
 
     private void reloadStockActionPerformed(java.awt.event.ActionEvent evt) {
@@ -472,7 +512,10 @@ public class Client extends javax.swing.JFrame {
     }
 
     private void assetsButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        user.setMoney(user.getMoney() - 1);
+        System.out.println(user.getMoney());
+        assets.setUser(user);
+        uiManager.viewAssets();
     }
 
     private void reloadNewsActionPerformed(java.awt.event.ActionEvent evt) {
@@ -480,7 +523,7 @@ public class Client extends javax.swing.JFrame {
     }
 
     private void selectStockActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        stockComboBox.setVisible(selectStock.isSelected());
     }
 
     private void rankingButtonActionPerformed(java.awt.event.ActionEvent evt) {
@@ -499,15 +542,83 @@ public class Client extends javax.swing.JFrame {
         running = false;
     }
 
+    private void stockComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
+        stockComboBox.setVisible(false);
+        stockComboBox.setSelectedIndex(-1);
+        selectStock.setSelected(false);
+    }
+
     public static void main(String[] args) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Client().setVisible(true);
+                Client client = new Client();
+                client.connecting(client);
             }
         });
     }
 
+    public void changeStockContent(){
+        stockContent = new StringBuilder("<html>");
+        stockContent.append("<span style='color:black;'>");
+        stockContent.append("[");
+        stockContent.append(sector.getName());
+        stockContent.append("]");
+        stockContent.append("<br>");
+        stockContent.append("<br>");
+
+        NumberFormat formatter = NumberFormat.getInstance();
+        formatter.setGroupingUsed(true);
+
+        for (Stock stock : sector.getStocks()) {
+            if(stock.getDelisting()){
+                stockContent.append("<span style='color:orange;'>");
+            }
+            else {
+                if (stock.getStat()) {
+                    stockContent.append("<span style='color:green;'>");
+                } else {
+                    if (!stock.getNotChange()) {
+                        stockContent.append("<span style='color:red;'>");
+                    } else {
+                        stockContent.append("<span style='color:gray;'>");
+                    }
+                }
+            }
+            stockContent.append(stock.getName())
+                    .append(" : (")
+                    .append(formatter.format(stock.getPrice()))
+                    .append(" 원) ");
+
+            if(stock.getDelisting()){
+                stockContent.append(">> [상장 폐지로 인한 가격 조정]");
+                stock.setDelisting(false);
+            }
+            else {
+                if (stock.getStat()) {
+                    stockContent.append(stock.getChangedPrice());
+                    stockContent.append("▲");
+                } else {
+                    if (!stock.getNotChange()) {
+                        stockContent.append(stock.getChangedPrice());
+                        stockContent.append("▼");
+                    } else {
+                        stockContent.append(stock.getChangedPrice());
+                        stockContent.append("-");
+                    }
+                }
+            }
+            stockContent.append("</span><br/><br/>");
+        }
+        stockContent.append("</html>");
+
+        stockPrice.setText(stockContent.toString());
+    }
+
     public class TimerThread extends Thread {
+        private List<Sector> sectors;
+        public TimerThread(List<Sector> sectors){
+            this.sectors = sectors;
+        }
         @Override
         public void run() {
             while (running) {
@@ -521,6 +632,10 @@ public class Client extends javax.swing.JFrame {
                         if (stockMin == 0){
                             stockMin = 3;
                             stockSec = 0;
+                            for (Sector sc : sectors) {
+                                sc.updateStockPrices(sc);
+                            }
+                            changeStockContent();
                         }
                         else{
                             stockMin--;
@@ -561,13 +676,15 @@ public class Client extends javax.swing.JFrame {
     private javax.swing.JButton dataDeleteButton;
     private javax.swing.JButton buyStock;
     private javax.swing.JButton sellStock;
-    private javax.swing.JButton selectStock;
+    private javax.swing.JToggleButton selectStock;
+    private javax.swing.JComboBox<String> stockComboBox;
     private javax.swing.JButton saveButton;
     private javax.swing.JButton shopButton;
     private javax.swing.JButton partTimeButton;
     private javax.swing.JButton assetsButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel stockPrice;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

@@ -1,8 +1,16 @@
+import java.util.*;
+import javax.swing.*;
+
 public class Stock {
     private String name;
-    private double price; // Stock 임시 제작
+    private int price;
+    private int prevPrice;
+    private int changedPrice;
+    private boolean stat = false;
+    private boolean notChange = true;
+    private boolean delisting = false;
 
-    public Stock(String name, double price) {
+    public Stock(String name, int price) {
         this.name = name;
         this.price = price;
     }
@@ -15,19 +23,52 @@ public class Stock {
         this.name = name;
     }
 
-    public double getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public int getPrevPrice() {
+        return prevPrice;
+    }
+
+    public int getChangedPrice() {
+        return changedPrice;
+    }
+
+    public void setChangedPrice() {
+        this.changedPrice = price - prevPrice;
+    }
+
+    public void setPrevPrice(int prevPrice) {
+        this.prevPrice = prevPrice;
+    }
+
+    public void setPrice(int price) {
         this.price = price;
     }
 
-    @Override
-    public String toString() {
-        return "Stock{" +
-                "name='" + name + '\'' +
-                ", price=" + price +
-                '}';
+    public void setStat(boolean stat) {
+        this.stat = stat;
     }
+
+    public void setNotChange(boolean notChange) {
+        this.notChange = notChange;
+    }
+
+    public void setDelisting(boolean delisting) {
+        this.delisting = delisting;
+    }
+
+    public boolean getNotChange(){
+        return notChange;
+    }
+
+    public boolean getStat(){
+        return stat;
+    }
+
+    public boolean getDelisting(){
+        return delisting;
+    }
+
 }
