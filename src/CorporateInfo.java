@@ -1,12 +1,44 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 public class CorporateInfo extends javax.swing.JFrame {
     private Client client;
+    private List<Sector> sectors;
+    private ArrayList<String> techName = new ArrayList<>();
+    private ArrayList<String> techEx = new ArrayList<>();
+    private ArrayList<String> artName = new ArrayList<>();
+    private ArrayList<String> artEx = new ArrayList<>();
+    private ArrayList<String> gameName = new ArrayList<>();
+    private ArrayList<String> gameEx = new ArrayList<>();
+    private ArrayList<String> selectedCompanies;
 
-    public CorporateInfo(Client client) {
+    public CorporateInfo(Client client, List<Sector> sectors) {
         this.client = client;
+        this.sectors = sectors;
+        readFile("Tech.txt", techName, techEx);
+        readFile("Art.txt", artName, artEx);
+        readFile("Game.txt", gameName, gameEx);
         initComponents();
     }
 
-    @SuppressWarnings("unchecked")
+    private void readFile(String file, ArrayList name, ArrayList ex){
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length >= 2) {
+                    name.add(parts[0].trim());
+                    ex.add(parts[1].trim());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
@@ -53,14 +85,15 @@ public class CorporateInfo extends javax.swing.JFrame {
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "분야", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { sectors.get(0).getName(), sectors.get(1).getName(), sectors.get(2).getName()}));
+        jComboBox1.setSelectedIndex(-1);
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox1ActionPerformed(evt);
             }
         });
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
         jComboBox2.setSelectedIndex(-1);
         jComboBox2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -70,7 +103,9 @@ public class CorporateInfo extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel2.setText("jLabel2");
+        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel2.setText("분야를 선택하고 기업을 선택하면 설명이 나타납니다.");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -78,15 +113,15 @@ public class CorporateInfo extends javax.swing.JFrame {
                 jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jLabel2)
-                                .addContainerGap(309, Short.MAX_VALUE))
+                                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 467, Short.MAX_VALUE)
+                                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
                 jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jLabel2)
-                                .addContainerGap(145, Short.MAX_VALUE))
+                                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
+                                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -94,7 +129,7 @@ public class CorporateInfo extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addGap(0, 204, Short.MAX_VALUE)
+                                .addGap(0, 0, Short.MAX_VALUE)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -103,9 +138,12 @@ public class CorporateInfo extends javax.swing.JFrame {
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                                         .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                 .addGap(204, 204, 204))))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addContainerGap(146, Short.MAX_VALUE)
+                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(136, 136, 136))
         );
         jPanel1Layout.setVerticalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -140,25 +178,57 @@ public class CorporateInfo extends javax.swing.JFrame {
         );
 
         pack();
-    }// </editor-fold>
 
+    }
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        int selectedIndex = jComboBox1.getSelectedIndex();
+        selectedCompanies = new ArrayList<>();
+        switch (selectedIndex) {
+            case 0: // 기술 분야
+                selectedCompanies = techName;
+                break;
+            case 1: // 예술 분야
+                selectedCompanies = artName;
+                break;
+            case 2: // 게임 분야
+                selectedCompanies = gameName;
+                break;
+            default:
+                break;
+        }
+
+        // 기업 목록을 jComboBox2에 설정
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(selectedCompanies.toArray(new String[0])));
+        jComboBox2.setSelectedIndex(-1);
     }
 
     private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        // jComboBox2에서 기업 선택 시, 해당 기업의 설명을 jLabel2에 출력
+        String selectedCompany = (String) jComboBox2.getSelectedItem();
+        ArrayList<String> selectedCompanyEx = null;
+        // 선택된 기업의 설명 찾기
+        if (techName.contains(selectedCompany)) {
+            selectedCompanyEx = techEx;
+        } else if (artName.contains(selectedCompany)) {
+            selectedCompanyEx = artEx;
+        } else if (gameName.contains(selectedCompany)) {
+            selectedCompanyEx = gameEx;
+        }
+        // 선택된 기업의 설명을 jLabel2에 출력
+        if (selectedCompanyEx != null) {
+            int index = selectedCompanies.indexOf(selectedCompany);
+            String description = selectedCompanyEx.get(index);
+            jLabel2.setText(description);
+        } else {
+            jLabel2.setText("");
+        }
     }
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
+        this.setVisible(false);
+        client.setVisible(true);
     }
 
-    /**
-     * @param args the command line arguments
-     */
-
-    // Variables declaration - do not modify
     private javax.swing.JButton jButton1;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
@@ -167,5 +237,4 @@ public class CorporateInfo extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    // End of variables declaration
 }

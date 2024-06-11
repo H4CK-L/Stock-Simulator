@@ -3,6 +3,10 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 
 public class Connect extends javax.swing.JFrame {
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
 
     public Connect() {
         initComponents();
@@ -77,9 +81,4 @@ public class Connect extends javax.swing.JFrame {
         });
         pack();
     }
-
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JPanel jPanel1;
 }

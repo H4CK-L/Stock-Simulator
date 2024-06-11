@@ -2,7 +2,7 @@ import java.util.*;
 
 public class Sector {
     private String name;
-    private List<Stock> stocks; // 분야 임시 제작
+    private List<Stock> stocks;
 
     public Sector(String name) {
         this.name = name;
@@ -31,24 +31,24 @@ public class Sector {
         for (Stock stock : sector.getStocks()) {
             if(stock.getPrice() <= 10){
                 change = random.nextInt(51);
+            } else {
+                change = random.nextInt((stock.getPrice() / 10) + 1);
             }
-            else {
-                change = random.nextInt((stock.getPrice() / 10) + 1); // Random change between 0 and 20
-            }
-            boolean increase = random.nextBoolean(); // Randomly decide to increase or decrease
+            boolean increase = random.nextBoolean();
+
+            change = (int)(change * stock.getNewsMultiplier());
+
             if(change == 0){
                 stock.setStat(false);
                 stock.setNotChange(true);
-            }
-            else {
+            } else {
                 stock.setPrevPrice(stock.getPrice());
                 if (increase) {
                     stock.setPrice(stock.getPrice() + change);
-                    stock.setStat(true); // Increase
-                }
-                else {
+                    stock.setStat(true);
+                } else {
                     stock.setPrice(stock.getPrice() - change);
-                    stock.setStat(false); // Decrease
+                    stock.setStat(false);
                 }
                 stock.setNotChange(false);
             }
