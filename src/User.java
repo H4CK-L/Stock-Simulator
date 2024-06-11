@@ -17,6 +17,27 @@ public class User {
             this.stockPortfolio = new HashMap<>();
             this.stockPrices = new HashMap<>();
             this.itemInventory = new HashMap<>();
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.contains(",")) {
+                    String[] parts = line.split(",");
+                    if (parts.length == 3) {
+                        // This is a stock entry
+                        String stockName = parts[0];
+                        int quantity = Integer.parseInt(parts[1]);
+                        int price = Integer.parseInt(parts[2]);
+                        Stock stock = new Stock(stockName, price);
+                        stockPortfolio.put(stock, quantity);
+                        stockPrices.put(stock, (double) price);
+                    } else if (parts.length == 2) {
+                        // This is an item entry
+                        String itemName = parts[0];
+                        int quantity = Integer.parseInt(parts[1]);
+                        itemInventory.put(itemName, quantity);
+                    }
+                }
+            }
         } catch (IOException e) {
             System.out.println("Cannot Read data");
         }

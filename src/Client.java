@@ -1,5 +1,8 @@
 import org.jfree.chart.*;
+import org.jfree.chart.axis.DateAxis;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.*;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.*;
 import org.jfree.data.xy.*;
 import javax.swing.*;
@@ -7,6 +10,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -24,8 +28,8 @@ public class Client extends JFrame {
     private String formattedDateTime;
     private int countNewsMin = 30;
     private int countNewsSec = 0;
-    private int stockMin = 0;
-    private int stockSec = 10;
+    private int stockMin = 3;
+    private int stockSec = 0;
     private volatile boolean running = true;
     private UIManager uiManager;
     private Assets assets;
@@ -35,6 +39,28 @@ public class Client extends JFrame {
     private News newsManager;
     private TimeSeries series;
     private JFreeChart chart;
+    private JButton reloadStock;
+    private JButton rankingButton;
+    private JButton reloadNews;
+    private JButton buyStock;
+    private JButton sellStock;
+    private JToggleButton selectStock;
+    private JComboBox<String> stockComboBox;
+    private JButton shopButton;
+    private JButton partTimeButton;
+    private JButton assetsButton;
+    private JButton corporateButton;
+    private JLabel showTime;
+    private JLabel showNewsTime;
+    private JLabel stockPrice;
+    private JPanel allPanel;
+    private JPanel optionPanel;
+    private JPanel optionPanel2;
+    private JPanel graphPanel;
+    private JPanel subpanel;
+    private JPanel newsPanel;
+    private JPanel chartPanel;
+    private JPanel newsTextPanel;
 
     public Client() {
         newsManager = new News();
@@ -56,10 +82,10 @@ public class Client extends JFrame {
             @Override
             public void windowClosed(WindowEvent e) {
                 // Connect 창이 닫힐 때 호출될 메소드
-                File file = new File("database.txt");
+                File file = new File("User.txt");
                 if (!file.exists()) {
                     uiManager.viewSetNickname();
-                    user = new User("database.txt");
+                    user = new User("User.txt");
                     assets = new Assets(user, sectors);
                     bot.setUser(user);
                     ranking = new Ranking(user, bot);
@@ -69,7 +95,7 @@ public class Client extends JFrame {
                     uiManager.setShop(user);
                     initComponents(client);
                 } else {
-                    user = new User("database.txt");
+                    user = new User("User.txt");
                     assets = new Assets(user, sectors);
                     bot.setUser(user);
                     ranking = new Ranking(user, bot);
@@ -120,16 +146,14 @@ public class Client extends JFrame {
         now = LocalDateTime.now();
         formatter = DateTimeFormatter.ofPattern("hh : mm : ss a", Locale.US);
         formattedDateTime = now.format(formatter);
-        jPanel1 = new JPanel();
+        allPanel = new JPanel();
         reloadStock = new JButton();
-        dataDeleteButton = new JButton();
-        jPanel2 = new JPanel();
+        optionPanel = new JPanel();
         buyStock = new JButton();
         sellStock = new JButton();
         selectStock = new JToggleButton();
         stockComboBox = new JComboBox<String>();
-        saveButton = new JButton();
-        jPanel3 = new JPanel();
+        optionPanel2 = new JPanel();
         stockPrice = new JLabel();
         shopButton = new JButton();
         partTimeButton = new JButton();
@@ -137,13 +161,13 @@ public class Client extends JFrame {
         rankingButton = new JButton();
         corporateButton = new JButton();
         reloadNews = new JButton();
-        jPanel4 = new JPanel();
-        jPanel5 = new JPanel();
-        jLabel1 = new JLabel();
-        jPanel7 = new JPanel();
-        jPanel6 = new JPanel();
-        jLabel2 = new JLabel();
-        jPanel8 = new JPanel();  // 신문 패널 추가
+        graphPanel = new JPanel();
+        subpanel = new JPanel();
+        showTime = new JLabel();
+        chartPanel = new JPanel();
+        newsPanel = new JPanel();
+        showNewsTime = new JLabel();
+        newsTextPanel = new JPanel();  // 신문 패널 추가
 
         // 신문 레이블 생성
         newsLabel = new JLabel();
@@ -151,42 +175,47 @@ public class Client extends JFrame {
         newsLabel.setHorizontalAlignment(SwingConstants.LEFT); // 수평 정렬
         newsLabel.setFont(new Font("한컴 고딕", 0, 13)); // 폰트 설정
         newsLabel.setText("<html>신문 내용이 여기에 표시됩니다.</html>");
-        jPanel8.add(newsLabel);
+        newsTextPanel.add(newsLabel);
 
         // JFreeChart 초기화
-        series = new TimeSeries("Stock Prices");
-        XYDataset dataset = createDataset();
+        series = new TimeSeries("Stock Prices"); // 기존 시리즈는 제거
+        XYDataset dataset = new TimeSeriesCollection(); // 데이터셋을 빈 데이터셋으로 초기화
         chart = createChart(dataset);
         ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new Dimension(560, 370));
-        jPanel4.setLayout(new BorderLayout());
-        jPanel4.add(chartPanel, BorderLayout.CENTER);
+        chartPanel.setPreferredSize(new Dimension(350, 250)); // 차트 패널 크기 조정
+        graphPanel.setLayout(new BorderLayout());
+        graphPanel.add(chartPanel, BorderLayout.CENTER);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("랭킹");
 
-        jPanel1.setBackground(new Color(255, 255, 255));
-        jPanel1.setPreferredSize(new Dimension(1000, 1000));
+        allPanel.setBackground(new Color(255, 255, 255));
+        allPanel.setPreferredSize(new Dimension(1000, 1000));
 
         reloadStock.setBackground(new Color(204, 255, 255));
         reloadStock.setFont(new Font("한컴 고딕", 0, 13)); // NOI18N
         reloadStock.setText("주가 갱신");
         reloadStock.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                reloadStockActionPerformed(evt);
+                JDialog updatingDialog = showUpdatingPopup("갱신중...");
+                SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+                    @Override
+                    protected Void doInBackground() throws Exception {
+                        reloadStockActionPerformed(evt);
+                        return null;
+                    }
+
+                    @Override
+                    protected void done() {
+                        updatingDialog.dispose();
+                        showCompletedPopup("갱신완료!");
+                    }
+                };
+                worker.execute();
             }
         });
 
-        dataDeleteButton.setBackground(new Color(255, 102, 102));
-        dataDeleteButton.setFont(new Font("한컴 고딕", 0, 13)); // NOI18N
-        dataDeleteButton.setText("데이터 삭제");
-        dataDeleteButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                dataDeleteButtonActionPerformed(evt);
-            }
-        });
-
-        jPanel2.setBackground(new Color(216, 228, 230));
+        optionPanel.setBackground(new Color(216, 228, 230));
 
         buyStock.setFont(new Font("한컴 고딕", 0, 13)); // NOI18N
         buyStock.setText("주식 매수");
@@ -212,23 +241,13 @@ public class Client extends JFrame {
             }
         });
 
-        saveButton.setBackground(new Color(255, 255, 204));
-        saveButton.setFont(new Font("한컴 고딕", 0, 13)); // NOI18N
-        saveButton.setText("게임 저장");
-        saveButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                saveButtonActionPerformed(evt);
-            }
-        });
-
-        GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
+        GroupLayout jPanel2Layout = new GroupLayout(optionPanel);
+        optionPanel.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
                 jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addComponent(saveButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                         .addComponent(selectStock, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                         .addComponent(buyStock)
                                         .addComponent(sellStock, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -243,12 +262,10 @@ public class Client extends JFrame {
                                 .addComponent(sellStock, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(selectStock, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(saveButton, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE)
                                 .addGap(29, 29, 29))
         );
 
-        jPanel3.setBackground(new Color(216, 228, 230));
+        optionPanel2.setBackground(new Color(216, 228, 230));
 
         shopButton.setFont(new Font("한컴 고딕", 0, 13)); // NOI18N
         shopButton.setText("상점");
@@ -283,8 +300,8 @@ public class Client extends JFrame {
             }
         });
 
-        GroupLayout jPanel3Layout = new GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
+        GroupLayout jPanel3Layout = new GroupLayout(optionPanel2);
+        optionPanel2.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
                 jPanel3Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel3Layout.createSequentialGroup()
@@ -315,14 +332,28 @@ public class Client extends JFrame {
         reloadNews.setText("신문 갱신");
         reloadNews.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                reloadNewsActionPerformed(evt);
+                JDialog updatingDialog = showUpdatingPopup("갱신중...");
+                SwingWorker<Void, Void> worker = new SwingWorker<Void, Void>() {
+                    @Override
+                    protected Void doInBackground() throws Exception {
+                        reloadNewsActionPerformed(evt);
+                        return null;
+                    }
+
+                    @Override
+                    protected void done() {
+                        updatingDialog.dispose();
+                        showCompletedPopup("갱신완료!");
+                    }
+                };
+                worker.execute();
             }
         });
 
-        jPanel4.setBackground(new Color(153, 153, 153));
+        graphPanel.setBackground(new Color(153, 153, 153));
 
-        GroupLayout jPanel4Layout = new GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
+        GroupLayout jPanel4Layout = new GroupLayout(graphPanel);
+        graphPanel.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
                 jPanel4Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addComponent(chartPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -332,15 +363,15 @@ public class Client extends JFrame {
                         .addComponent(chartPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        jPanel5.setBackground(new Color(153, 153, 153));
-        jLabel1.setFont(new Font("한컴 고딕", 1, 14)); // NOI18N
+        subpanel.setBackground(new Color(153, 153, 153));
+        showTime.setFont(new Font("한컴 고딕", 1, 14)); // NOI18N
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        jLabel1.setText("주가 차트 | 현재 시각 : " + formattedDateTime + " | 주가 변동까지 남은 시간 : " + String.format("%02d분 %02d초", stockMin, stockSec));
+        showTime.setText("주가 차트 | 현재 시각 : " + formattedDateTime + " | 주가 변동까지 남은 시간 : " + String.format("%02d분 %02d초", stockMin, stockSec));
 
-        jPanel7.setBackground(new Color(51, 51, 51));
+        this.chartPanel.setBackground(new Color(51, 51, 51));
 
-        GroupLayout jPanel7Layout = new GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
+        GroupLayout jPanel7Layout = new GroupLayout(this.chartPanel);
+        this.chartPanel.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
                 jPanel7Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel7Layout.createSequentialGroup()
@@ -360,41 +391,41 @@ public class Client extends JFrame {
 
         stockPrice.setVerticalAlignment(SwingConstants.TOP);
         stockPrice.setFont(new Font("한컴 고딕", 1, 14));
-        GroupLayout jPanel5Layout = new GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
+        GroupLayout jPanel5Layout = new GroupLayout(subpanel);
+        subpanel.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
                 jPanel5Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel5Layout.createSequentialGroup()
                                 .addGroup(jPanel5Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel5Layout.createSequentialGroup()
                                                 .addGap(15, 15, 15)
-                                                .addComponent(jLabel1))
+                                                .addComponent(showTime))
                                         .addGroup(jPanel5Layout.createSequentialGroup()
                                                 .addGap(37, 37, 37)
-                                                .addComponent(jPanel7, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                                                .addComponent(this.chartPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
                                 .addContainerGap(38, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
                 jPanel5Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel5Layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jLabel1)
+                                .addComponent(showTime)
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jPanel7, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(this.chartPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap(39, Short.MAX_VALUE))
         );
 
-        jPanel6.setBackground(new Color(250, 250, 250));
+        newsPanel.setBackground(new Color(250, 250, 250));
 
-        jLabel2.setFont(new Font("한컴 고딕", 1, 14)); // NOI18N
+        showNewsTime.setFont(new Font("한컴 고딕", 1, 14)); // NOI18N
         TimerThread timerThread = new TimerThread(sectors, newsManager); // TimerThread 객체 생성
         timerThread.start(); // 타이머 시작
-        jLabel2.setText(String.format("Daily News! | 신문 갱신까지 남은 시간 : %02d분 %02d초", countNewsMin, countNewsSec));
+        showNewsTime.setText(String.format("Daily News! | 신문 갱신까지 남은 시간 : %02d분 %02d초", countNewsMin, countNewsSec));
 
-        jPanel8.setBackground(new Color(255, 153, 102));
+        newsTextPanel.setBackground(new Color(255, 153, 102));
 
-        GroupLayout jPanel8Layout = new GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
+        GroupLayout jPanel8Layout = new GroupLayout(newsTextPanel);
+        newsTextPanel.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
                 jPanel8Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addComponent(newsLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -404,26 +435,26 @@ public class Client extends JFrame {
                         .addComponent(newsLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        GroupLayout jPanel6Layout = new GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
+        GroupLayout jPanel6Layout = new GroupLayout(newsPanel);
+        newsPanel.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
                 jPanel6Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel6Layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(jPanel6Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel6Layout.createSequentialGroup()
-                                                .addComponent(jLabel2)
+                                                .addComponent(showNewsTime)
                                                 .addGap(0, 0, Short.MAX_VALUE))
-                                        .addComponent(jPanel8, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addComponent(newsTextPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
                 jPanel6Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel6Layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jLabel2)
+                                .addComponent(showNewsTime)
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jPanel8, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(newsTextPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap(9, Short.MAX_VALUE))
         );
 
@@ -438,14 +469,17 @@ public class Client extends JFrame {
                     case 0:
                         sector = sectors.get(selectedIndex);
                         changeStockContent();
+                        updateChart(); // 차트 업데이트
                         break;
                     case 1:
                         sector = sectors.get(selectedIndex);
                         changeStockContent();
+                        updateChart(); // 차트 업데이트
                         break;
                     case 2:
                         sector = sectors.get(selectedIndex);
                         changeStockContent();
+                        updateChart(); // 차트 업데이트
                         break;
                 }
                 stockComboBoxActionPerformed(evt);
@@ -462,27 +496,26 @@ public class Client extends JFrame {
         });
         corporateButton.setPreferredSize(reloadNews.getPreferredSize());
 
-        GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
+        GroupLayout jPanel1Layout = new GroupLayout(allPanel);
+        allPanel.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
                 jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGap(15, 15, 15)
                                 .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jPanel3, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(optionPanel2, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(reloadStock, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(corporateButton, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addComponent(jPanel4, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jPanel5, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jPanel6, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addComponent(graphPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(subpanel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(newsPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                                 .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                        .addComponent(dataDeleteButton, GroupLayout.Alignment.TRAILING)
-                                                        .addComponent(jPanel2, GroupLayout.Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(optionPanel, GroupLayout.Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                                         .addComponent(reloadNews, GroupLayout.Alignment.TRAILING, GroupLayout.PREFERRED_SIZE, 94, GroupLayout.PREFERRED_SIZE)))
                                         .addGroup(GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                                 .addGap(6, 6, 6)
@@ -495,23 +528,22 @@ public class Client extends JFrame {
                                 .addContainerGap()
                                 .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addComponent(jPanel4, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(graphPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jPanel5, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(subpanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                                 .addGap(18, 18, 18)
-                                                .addComponent(jPanel6, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(newsPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                 .addGap(22, 22, 22))
                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                                 .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(reloadStock, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(dataDeleteButton, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE))
+                                                        .addComponent(reloadStock, GroupLayout.PREFERRED_SIZE, 32, GroupLayout.PREFERRED_SIZE))
                                                 .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                                                 .addGap(117, 117, 117)
-                                                                .addComponent(jPanel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                                                .addComponent(optionPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                                                         .addGroup(GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                                .addComponent(jPanel3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+                                                                .addComponent(optionPanel2, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
                                                 .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
@@ -530,13 +562,13 @@ public class Client extends JFrame {
         layout.setHorizontalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                                .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, 915, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(allPanel, GroupLayout.PREFERRED_SIZE, 915, GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                                .addComponent(jPanel1, GroupLayout.PREFERRED_SIZE, 773, GroupLayout.PREFERRED_SIZE)
+                                .addComponent(allPanel, GroupLayout.PREFERRED_SIZE, 773, GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -548,22 +580,16 @@ public class Client extends JFrame {
     }
 
     private void reloadStockActionPerformed(ActionEvent evt) {
-        // TODO add your handling code here:
-    }
-
-    private void dataDeleteButtonActionPerformed(ActionEvent evt) {
-        // TODO add your handling code here:
-    }
-
-    private void saveButtonActionPerformed(ActionEvent evt) {
-        // TODO add your handling code here:
-    }
-
-    private void sellStockActionPerformed(ActionEvent evt) {
-        uiManager.viewOrder();
+        // 주가 갱신 로직
+        changeStockContent();
+        updateChart();
     }
 
     private void buyStockActionPerformed(ActionEvent evt) {
+        uiManager.viewOrder();
+    }
+
+    private void sellStockActionPerformed(ActionEvent evt) {
         uiManager.viewOrder();
     }
 
@@ -581,7 +607,8 @@ public class Client extends JFrame {
     }
 
     private void reloadNewsActionPerformed(ActionEvent evt) {
-        updateNews();
+        // 신문 갱신 로직
+        newsLabel.repaint();
     }
 
     private void selectStockActionPerformed(ActionEvent evt) {
@@ -598,11 +625,11 @@ public class Client extends JFrame {
     }
 
     private void updateTimerLabel() {
-        jLabel2.setText(String.format("Daily News! | 신문 갱신까지 남은 시간 : %02d분 %02d초", countNewsMin, countNewsSec));
+        showNewsTime.setText(String.format("Daily News! | 신문 갱신까지 남은 시간 : %02d분 %02d초", countNewsMin, countNewsSec));
     }
 
     private void updateStockLabel() {
-        jLabel1.setText("주가 차트 | 현재 시각 : " + formattedDateTime + " | 주가 변동까지 남은 시간 : " + String.format("%02d분 %02d초", stockMin, stockSec));
+        showTime.setText("주가 차트 | 현재 시각 : " + formattedDateTime + " | 주가 변동까지 남은 시간 : " + String.format("%02d분 %02d초", stockMin, stockSec));
     }
 
     private void stopTimerThread() {
@@ -613,6 +640,20 @@ public class Client extends JFrame {
         stockComboBox.setVisible(false);
         stockComboBox.setSelectedIndex(-1);
         selectStock.setSelected(false);
+    }
+
+    private JDialog showUpdatingPopup(String message) {
+        JDialog dialog = new JDialog(this, "알림", true);
+        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        dialog.setLayout(new BorderLayout());
+        dialog.add(new JLabel(message, SwingConstants.CENTER), BorderLayout.CENTER);
+        dialog.setSize(200, 100);
+        dialog.setLocationRelativeTo(this);
+        return dialog;
+    }
+
+    private void showCompletedPopup(String message) {
+        JOptionPane.showMessageDialog(this, message, "알림", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public static void main(String[] args) {
@@ -733,16 +774,60 @@ public class Client extends JFrame {
     }
 
     private JFreeChart createChart(XYDataset dataset) {
-        return ChartFactory.createTimeSeriesChart(
-                "Stock Prices",
-                "Time",
-                "Price",
+        JFreeChart chart = ChartFactory.createTimeSeriesChart(
+                "주가 그래프", // Chart title
+                "시간", // X-Axis Label
+                "가격", // Y-Axis Label
                 dataset,
-                true,
-                true,
-                false
+                true, // Show legend
+                true, // Use tooltips
+                false // Configure chart to generate URLs?
         );
+
+        XYPlot plot = (XYPlot) chart.getPlot();
+        plot.setOrientation(PlotOrientation.VERTICAL);
+        plot.setDomainPannable(true);
+        plot.setRangePannable(true);
+        plot.setDomainGridlinesVisible(true);
+        plot.setRangeGridlinesVisible(true);
+        plot.setDomainGridlinePaint(java.awt.Color.BLACK);
+        plot.setRangeGridlinePaint(java.awt.Color.BLACK);
+
+        DateAxis axis = (DateAxis) plot.getDomainAxis();
+        axis.setDateFormatOverride(new SimpleDateFormat("HH:mm"));
+
+        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(true, false);
+        plot.setRenderer(renderer);
+
+        // 한글 폰트 설정
+        Font font = new Font("한컴 고딕", Font.BOLD, 13);
+        chart.getTitle().setFont(font);
+        plot.getDomainAxis().setLabelFont(font);
+        plot.getDomainAxis().setTickLabelFont(font);
+        plot.getRangeAxis().setLabelFont(font);
+        plot.getRangeAxis().setTickLabelFont(font);
+        chart.getLegend().setItemFont(font);
+
+        return chart;
     }
+
+    private void updateChart() {
+        TimeSeriesCollection dataset = new TimeSeriesCollection(); // 새로운 데이터셋 생성
+        for (Stock stock : sector.getStocks()) {
+            TimeSeries series = new TimeSeries(stock.getName());
+            List<Stock.PriceRecord> priceHistory = stock.getPriceHistory();
+            for (Stock.PriceRecord record : priceHistory) {
+                series.addOrUpdate(new Minute(record.getTime().getMinute(), record.getTime().getHour(), record.getTime().getDayOfMonth(), record.getTime().getMonthValue(), record.getTime().getYear()), record.getPrice());
+            }
+            dataset.addSeries(series); // 각 주식의 시리즈를 데이터셋에 추가
+        }
+        chart.getXYPlot().setDataset(dataset); // 차트의 데이터셋을 업데이트된 데이터셋으로 설정
+    }
+
+
 
     public class TimerThread extends Thread {
         private List<Sector> sectors;
@@ -771,8 +856,7 @@ public class Client extends JFrame {
                             }
                             changeStockContent();
                             bot.setBotMoney();
-                            // 차트 데이터 업데이트
-                            series.addOrUpdate(new Second(Date.from(now.atZone(ZoneId.systemDefault()).toInstant())), sector.getStocks().get(0).getPrice());
+                            updateChart();
                         } else {
                             stockMin--;
                             stockSec = 59;
@@ -805,29 +889,4 @@ public class Client extends JFrame {
             }
         }
     }
-
-    private JButton reloadStock;
-    private JButton rankingButton;
-    private JButton reloadNews;
-    private JButton dataDeleteButton;
-    private JButton buyStock;
-    private JButton sellStock;
-    private JToggleButton selectStock;
-    private JComboBox<String> stockComboBox;
-    private JButton saveButton;
-    private JButton shopButton;
-    private JButton partTimeButton;
-    private JButton assetsButton;
-    private JButton corporateButton;
-    private JLabel jLabel1;
-    private JLabel jLabel2;
-    private JLabel stockPrice;
-    private JPanel jPanel1;
-    private JPanel jPanel2;
-    private JPanel jPanel3;
-    private JPanel jPanel4;
-    private JPanel jPanel5;
-    private JPanel jPanel6;
-    private JPanel jPanel7;
-    private JPanel jPanel8;
 }

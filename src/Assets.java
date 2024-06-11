@@ -12,6 +12,9 @@ public class Assets extends javax.swing.JFrame {
     private StringBuilder assetsContent;
     private List<Sector> sectors;
     private JDialog itemDialog;
+    private javax.swing.JLabel assetsInfo;
+    private javax.swing.JPanel assetsPanel;
+    private javax.swing.JButton showItemsButton;
 
     public Assets(User user, List<Sector> sectors) {
         this.user = user;
@@ -31,8 +34,8 @@ public class Assets extends javax.swing.JFrame {
     private void initComponents() {
         setTitle("총 자산");
 
-        jPanel1 = new javax.swing.JPanel();
-        jPanel1.setBackground(new java.awt.Color(51, 51, 51));
+        assetsPanel = new javax.swing.JPanel();
+        assetsPanel.setBackground(new java.awt.Color(51, 51, 51));
         assetsInfo = new javax.swing.JLabel();
         showItemsButton = new javax.swing.JButton();
 
@@ -50,8 +53,8 @@ public class Assets extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(assetsPanel);
+        assetsPanel.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel1Layout.createSequentialGroup()
@@ -77,11 +80,11 @@ public class Assets extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(assetsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(assetsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -262,8 +265,4 @@ public class Assets extends javax.swing.JFrame {
         Random random = new Random();
         return sectors.get(random.nextInt(sectors.size()));
     }
-
-    private javax.swing.JLabel assetsInfo;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JButton showItemsButton;
 }

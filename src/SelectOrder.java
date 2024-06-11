@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -11,14 +10,22 @@ public class SelectOrder extends javax.swing.JFrame {
     private User user;
     private boolean isSellMode = false;
     private Map<String, List<String>> userStockMap;
+    private javax.swing.JButton backButton;
+    private javax.swing.JComboBox<String> selectSector;
+    private javax.swing.JComboBox<String> selectStock;
+    private javax.swing.JPanel allPanel;
+    private javax.swing.JTextField contextField;
+    private javax.swing.JToggleButton sectorButton;
+    private javax.swing.JToggleButton sellButton;
+    private javax.swing.JToggleButton buyButton;
 
     public SelectOrder(Client client, List<Sector> sectors) {
         this.client = client;
         this.sectors = sectors;
         initComponents();
-        jComboBox1.setVisible(false);
-        jComboBox2.setVisible(false);
-        jTextField1.setEnabled(false);
+        selectSector.setVisible(false);
+        selectStock.setVisible(false);
+        contextField.setEnabled(false);
     }
 
     public void setUser(User user) {
@@ -26,144 +33,144 @@ public class SelectOrder extends javax.swing.JFrame {
     }
 
     private void initComponents() {
-        jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jToggleButton1 = new javax.swing.JToggleButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jComboBox2 = new javax.swing.JComboBox<>();
-        jTextField1 = new javax.swing.JTextField();
-        jToggleButton2 = new javax.swing.JToggleButton();
-        jToggleButton4 = new javax.swing.JToggleButton();
+        allPanel = new javax.swing.JPanel();
+        backButton = new javax.swing.JButton();
+        sectorButton = new javax.swing.JToggleButton();
+        selectSector = new javax.swing.JComboBox<>();
+        selectStock = new javax.swing.JComboBox<>();
+        contextField = new javax.swing.JTextField();
+        sellButton = new javax.swing.JToggleButton();
+        buyButton = new javax.swing.JToggleButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(153, 204, 255));
-        jPanel1.setPreferredSize(new java.awt.Dimension(761, 524));
+        allPanel.setBackground(new java.awt.Color(153, 204, 255));
+        allPanel.setPreferredSize(new java.awt.Dimension(761, 524));
 
-        jButton1.setBackground(new java.awt.Color(153, 204, 255));
-        jButton1.setFont(new java.awt.Font("한컴 고딕", 1, 14));
-        jButton1.setText("뒤로가기");
-        jButton1.setToolTipText("");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        backButton.setBackground(new java.awt.Color(153, 204, 255));
+        backButton.setFont(new java.awt.Font("한컴 고딕", 1, 14));
+        backButton.setText("뒤로가기");
+        backButton.setToolTipText("");
+        backButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jToggleButton1.setFont(new java.awt.Font("한컴 고딕", 1, 14));
-        jToggleButton1.setText("분야");
-        jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
+        sectorButton.setFont(new java.awt.Font("한컴 고딕", 1, 14));
+        sectorButton.setText("분야");
+        sectorButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jToggleButton1ActionPerformed(evt);
             }
         });
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(
+        selectSector.setModel(new javax.swing.DefaultComboBoxModel<>(
                 sectors.stream().map(Sector::getName).toArray(String[]::new)
         ));
-        jComboBox1.setSelectedIndex(-1);
-        jComboBox1.setFocusable(false);
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+        selectSector.setSelectedIndex(-1);
+        selectSector.setFocusable(false);
+        selectSector.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox1ActionPerformed(evt);
             }
         });
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
-        jComboBox2.setSelectedIndex(-1);
-        jComboBox2.addActionListener(new java.awt.event.ActionListener() {
+        selectStock.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {}));
+        selectStock.setSelectedIndex(-1);
+        selectStock.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBox2ActionPerformed(evt);
             }
         });
 
-        jTextField1.setFont(new java.awt.Font("맑은 고딕", 0, 14));
-        jTextField1.setForeground(new java.awt.Color(204, 204, 204));
-        jTextField1.setText("수량. . .");
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        contextField.setFont(new java.awt.Font("맑은 고딕", 0, 14));
+        contextField.setForeground(new java.awt.Color(204, 204, 204));
+        contextField.setText("수량. . .");
+        contextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField1ActionPerformed(evt);
             }
         });
-        jTextField1.addFocusListener(new java.awt.event.FocusAdapter() {
+        contextField.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                if (jTextField1.getText().equals("수량. . .")) {
-                    jTextField1.setText("");
-                    jTextField1.setForeground(Color.BLACK);
+                if (contextField.getText().equals("수량. . .")) {
+                    contextField.setText("");
+                    contextField.setForeground(Color.BLACK);
                 }
             }
 
             public void focusLost(java.awt.event.FocusEvent evt) {
-                if (jTextField1.getText().isEmpty()) {
-                    jTextField1.setText("수량. . .");
-                    jTextField1.setForeground(new Color(153, 153, 153));
+                if (contextField.getText().isEmpty()) {
+                    contextField.setText("수량. . .");
+                    contextField.setForeground(new Color(153, 153, 153));
                 }
             }
         });
 
-        jToggleButton2.setBackground(new java.awt.Color(255, 153, 102));
-        jToggleButton2.setFont(new java.awt.Font("맑은 고딕", 1, 14));
-        jToggleButton2.setText("시장가 매수");
-        jToggleButton2.addActionListener(new java.awt.event.ActionListener() {
+        sellButton.setBackground(new java.awt.Color(255, 153, 102));
+        sellButton.setFont(new java.awt.Font("맑은 고딕", 1, 14));
+        sellButton.setText("시장가 매수");
+        sellButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jToggleButton2ActionPerformed(evt);
             }
         });
 
-        jToggleButton4.setBackground(new java.awt.Color(255, 153, 102));
-        jToggleButton4.setFont(new java.awt.Font("맑은 고딕", 1, 14));
-        jToggleButton4.setText("시장가 매도");
-        jToggleButton4.addActionListener(new java.awt.event.ActionListener() {
+        buyButton.setBackground(new java.awt.Color(255, 153, 102));
+        buyButton.setFont(new java.awt.Font("맑은 고딕", 1, 14));
+        buyButton.setText("시장가 매도");
+        buyButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jToggleButton4ActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(allPanel);
+        allPanel.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(25, 25, 25)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel1Layout.createSequentialGroup()
-                                                .addComponent(jToggleButton1)
+                                                .addComponent(sectorButton)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(selectSector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                .addComponent(jToggleButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(jToggleButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addComponent(buyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(sellButton, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(selectStock, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                                 .addGap(135, 135, 135)
-                                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addComponent(contextField, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addContainerGap(369, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                                 .addGap(21, 21, 21)
                                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(jToggleButton1)
-                                                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addComponent(sectorButton)
+                                                        .addComponent(selectSector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(selectStock, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 247, Short.MAX_VALUE)
-                                                .addComponent(jToggleButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(sellButton, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGap(19, 19, 19)
-                                                .addComponent(jToggleButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(buyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGap(91, 91, 91))
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(contextField, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGap(123, 123, 123))))
         );
 
@@ -172,39 +179,39 @@ public class SelectOrder extends javax.swing.JFrame {
         layout.setHorizontalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(allPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
-                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(allPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))
         );
-        jToggleButton1.setEnabled(false);
+        sectorButton.setEnabled(false);
         pack();
     }
 
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-        jComboBox1.setVisible(jToggleButton1.isSelected());
-        if (!jToggleButton1.isSelected()) {
-            jComboBox2.setVisible(false);
+        selectSector.setVisible(sectorButton.isSelected());
+        if (!sectorButton.isSelected()) {
+            selectStock.setVisible(false);
         }
-        jComboBox2.setSelectedIndex(-1);
+        selectStock.setSelectedIndex(-1);
     }
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {
-        if (jComboBox1.getSelectedIndex() != -1) {
+        if (selectSector.getSelectedIndex() != -1) {
             if (isSellMode) {
                 updateSellComboBox();
             } else {
-                Sector selectedSector = sectors.get(jComboBox1.getSelectedIndex());
+                Sector selectedSector = sectors.get(selectSector.getSelectedIndex());
                 List<Stock> stocks = selectedSector.getStocks();
-                jComboBox2.removeAllItems();
+                selectStock.removeAllItems();
                 for (Stock stock : stocks) {
-                    jComboBox2.addItem(stock.getName());
+                    selectStock.addItem(stock.getName());
                 }
-                jComboBox2.setVisible(true);
+                selectStock.setVisible(true);
             }
         }
     }
@@ -219,12 +226,12 @@ public class SelectOrder extends javax.swing.JFrame {
     }
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {
-        String quantityText = jTextField1.getText();
+        String quantityText = contextField.getText();
         try {
             int quantity = Integer.parseInt(quantityText);
-            if (jToggleButton2.isSelected() && jComboBox2.getSelectedIndex() != -1) {
+            if (sellButton.isSelected() && selectStock.getSelectedIndex() != -1) {
                 buyStock(quantity);
-            } else if (jToggleButton4.isSelected() && jComboBox2.getSelectedIndex() != -1) {
+            } else if (buyButton.isSelected() && selectStock.getSelectedIndex() != -1) {
                 sellStock(quantity);
             }
         } catch (NumberFormatException e) {
@@ -234,39 +241,39 @@ public class SelectOrder extends javax.swing.JFrame {
 
     private void jToggleButton2ActionPerformed(java.awt.event.ActionEvent evt) {
         isSellMode = false;
-        if(jToggleButton2.isSelected()) {
-            jToggleButton1.setEnabled(true);
+        if(sellButton.isSelected()) {
+            sectorButton.setEnabled(true);
         }
         else{
-            jToggleButton1.setEnabled(false);
+            sectorButton.setEnabled(false);
         }
-        if(jToggleButton4.isSelected()){
-            jToggleButton4.setSelected(false);
+        if(buyButton.isSelected()){
+            buyButton.setSelected(false);
         }
         updateComboBoxes();
     }
 
     private void jToggleButton4ActionPerformed(java.awt.event.ActionEvent evt) {
         isSellMode = true;
-        if(jToggleButton4.isSelected()) {
-            jToggleButton1.setEnabled(true);
+        if(buyButton.isSelected()) {
+            sectorButton.setEnabled(true);
         }
         else{
-            jToggleButton1.setEnabled(false);
+            sectorButton.setEnabled(false);
         }
-        if(jToggleButton2.isSelected()){
-            jToggleButton2.setSelected(false);
+        if(sellButton.isSelected()){
+            sellButton.setSelected(false);
         }
         updateComboBoxes();
     }
 
     private void checkComboBoxSelection() {
-        jTextField1.setEnabled(jComboBox2.getSelectedIndex() != -1);
+        contextField.setEnabled(selectStock.getSelectedIndex() != -1);
     }
 
     private void updateComboBoxes() {
-        jComboBox1.removeAllItems();
-        jComboBox2.removeAllItems();
+        selectSector.removeAllItems();
+        selectStock.removeAllItems();
 
         if (isSellMode) { // 매도 모드
             userStockMap = user.getStockPortfolio().entrySet().stream()
@@ -274,28 +281,28 @@ public class SelectOrder extends javax.swing.JFrame {
                             entry -> getSectorByStock(entry.getKey()).getName(),
                             Collectors.mapping(entry -> entry.getKey().getName(), Collectors.toList())
                     ));
-            userStockMap.keySet().forEach(sectorName -> jComboBox1.addItem(sectorName));
+            userStockMap.keySet().forEach(sectorName -> selectSector.addItem(sectorName));
         } else { // 매수 모드
-            sectors.forEach(sector -> jComboBox1.addItem(sector.getName()));
+            sectors.forEach(sector -> selectSector.addItem(sector.getName()));
         }
 
-        jComboBox1.setSelectedIndex(-1);
-        jComboBox2.setSelectedIndex(-1);
+        selectSector.setSelectedIndex(-1);
+        selectStock.setSelectedIndex(-1);
 
-        jComboBox1.setVisible(false);
-        jComboBox2.setVisible(false);
-        jToggleButton1.setSelected(false);
+        selectSector.setVisible(false);
+        selectStock.setVisible(false);
+        sectorButton.setSelected(false);
     }
 
     private void updateSellComboBox() {
-        String selectedSectorName = (String) jComboBox1.getSelectedItem();
+        String selectedSectorName = (String) selectSector.getSelectedItem();
         List<String> stockNames = userStockMap.get(selectedSectorName);
-        jComboBox2.removeAllItems();
+        selectStock.removeAllItems();
         for (String stockName : stockNames) {
-            jComboBox2.addItem(stockName);
+            selectStock.addItem(stockName);
         }
-        jComboBox2.setSelectedIndex(-1);
-        jComboBox2.setVisible(true);
+        selectStock.setSelectedIndex(-1);
+        selectStock.setVisible(true);
     }
 
     private Sector getSectorByStock(Stock stock) {
@@ -306,8 +313,8 @@ public class SelectOrder extends javax.swing.JFrame {
     }
 
     private void buyStock(int quantity) {
-        Sector selectedSector = sectors.get(jComboBox1.getSelectedIndex());
-        Stock selectedStock = selectedSector.getStocks().get(jComboBox2.getSelectedIndex());
+        Sector selectedSector = sectors.get(selectSector.getSelectedIndex());
+        Stock selectedStock = selectedSector.getStocks().get(selectStock.getSelectedIndex());
         int totalPrice = selectedStock.getPrice() * quantity;
 
         if (user.getMoney() >= totalPrice) {
@@ -322,7 +329,7 @@ public class SelectOrder extends javax.swing.JFrame {
     }
 
     private void sellStock(int quantity) {
-        String selectedSectorName = (String) jComboBox1.getSelectedItem();
+        String selectedSectorName = (String) selectSector.getSelectedItem();
         List<String> stockNames = userStockMap.get(selectedSectorName);
         Stock selectedStock = sectors.stream()
                 .filter(sector -> sector.getName().equals(selectedSectorName))
@@ -350,13 +357,4 @@ public class SelectOrder extends javax.swing.JFrame {
             System.out.println(entry.getKey().getName() + ": " + entry.getValue() + " 주");
         }
     }
-
-    private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JToggleButton jToggleButton1;
-    private javax.swing.JToggleButton jToggleButton2;
-    private javax.swing.JToggleButton jToggleButton4;
 }
