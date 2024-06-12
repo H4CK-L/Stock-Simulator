@@ -79,8 +79,9 @@ public class PartTime extends javax.swing.JFrame {
     }
 
     private void updateStartButton() {
-        if (user.getPartTimeCount() == 0) {
+        if (user.getPartTimeCount() <= 0) {
             startButton.setBackground(Color.GRAY);
+            user.setPartTimeCount(0);
             startButton.setEnabled(false);
             partList.setEnabled(false);
             SwingUtilities.invokeLater(() -> exText.setText("<html><span style='color:red;'>보유한 알바 가능 횟수가 없습니다!!<br>충전이 된 후 시도하세요!!<br/></span></html>"));
