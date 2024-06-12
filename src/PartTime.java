@@ -109,7 +109,7 @@ public class PartTime extends javax.swing.JFrame {
                                 SwingUtilities.invokeLater(new Runnable() {
                                     @Override
                                     public void run() {
-                                        updateStartButton(); // 버튼 상태 갱신
+                                        updateStartButton();
                                     }
                                 });
                             }
