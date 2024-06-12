@@ -22,6 +22,7 @@
   1. Connect 화면
   <br><br/>
   <br>
+  
   ![image](https://github.com/H4CK-L/Stock-Simulator/assets/122271813/4cee71e9-61ea-46de-b233-3d46c4d8a970)
   <br/>
   <br>
