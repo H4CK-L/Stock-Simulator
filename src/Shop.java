@@ -104,6 +104,7 @@ public class Shop extends javax.swing.JFrame {
         item1Panel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("CCSS : Capital Conquest : Stock Saga : Shop");
 
         allPanel.setBackground(new java.awt.Color(255, 194, 103));
         allPanel.setPreferredSize(new java.awt.Dimension(761, 524));

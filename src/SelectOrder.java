@@ -43,6 +43,7 @@ public class SelectOrder extends javax.swing.JFrame {
         buyButton = new javax.swing.JToggleButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("CCSS : Capital Conquest : Stock Saga : Order");
 
         allPanel.setBackground(new java.awt.Color(153, 204, 255));
         allPanel.setPreferredSize(new java.awt.Dimension(761, 524));

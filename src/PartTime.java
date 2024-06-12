@@ -151,6 +151,7 @@ public class PartTime extends javax.swing.JFrame {
         startButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("CCSS : Capital Conquest : Stock Saga : PartTime");
 
         allPanel.setBackground(new java.awt.Color(140, 255, 187));
         allPanel.setFont(new java.awt.Font("한컴 고딕", 1, 14)); // NOI18N

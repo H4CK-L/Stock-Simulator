@@ -91,6 +91,8 @@ public class Ranking extends javax.swing.JFrame {
         titleText = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("CCSS : Capital Conquest : Stock Saga : Ranking");
+
         setPreferredSize(new java.awt.Dimension(600, 400));
 
         timePanel.setBackground(new java.awt.Color(255, 255, 255));

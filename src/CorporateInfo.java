@@ -59,6 +59,7 @@ public class CorporateInfo extends javax.swing.JFrame {
         infoText = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("CCSS : Capital Conquest : Stock Saga : Corporate Info");
 
         allPanel.setBackground(new java.awt.Color(244, 221, 244));
         allPanel.setPreferredSize(new java.awt.Dimension(761, 524));

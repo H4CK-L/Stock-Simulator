@@ -146,7 +146,6 @@ public class Client extends JFrame {
         sectors.add(sector);
     }
 
-    @SuppressWarnings("unchecked")
     private void initComponents(Client client) {
         now = LocalDateTime.now();
         formatter = DateTimeFormatter.ofPattern("hh : mm : ss a", Locale.US);
@@ -192,7 +191,7 @@ public class Client extends JFrame {
         graphPanel.add(chartPanel, BorderLayout.CENTER);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setTitle("랭킹");
+        setTitle("CCSS : Capital Conquest : Stock Saga : Main");
 
         allPanel.setBackground(new Color(255, 255, 255));
         allPanel.setPreferredSize(new Dimension(1000, 1000));

@@ -32,14 +32,14 @@ public class Assets extends javax.swing.JFrame {
     }
 
     private void initComponents() {
-        setTitle("총 자산");
-
         assetsPanel = new javax.swing.JPanel();
         assetsPanel.setBackground(new java.awt.Color(51, 51, 51));
         assetsInfo = new javax.swing.JLabel();
         showItemsButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("CCSS : Capital Conquest : Stock Saga : Assets");
+
         setPreferredSize(new java.awt.Dimension(800, 300));
 
         setAssets();

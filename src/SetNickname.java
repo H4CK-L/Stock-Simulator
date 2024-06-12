@@ -22,6 +22,7 @@ public class SetNickname extends javax.swing.JFrame {
         nameField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("CCSS : Capital Conquest : Stock Saga : Set Nickname");
 
         allPanel.setBackground(new java.awt.Color(255, 255, 255));
         allPanel.setPreferredSize(new java.awt.Dimension(761, 524));
