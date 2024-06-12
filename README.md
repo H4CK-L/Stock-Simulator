@@ -33,6 +33,8 @@
   <br/>
   <br>
   3. 메인 화면
+  <br>
+  <br>
   ![image](https://github.com/H4CK-L/Stock-Simulator/assets/122271813/42f51804-97f6-44ba-9139-044c1394e40a)
   <br/>
   <br>
