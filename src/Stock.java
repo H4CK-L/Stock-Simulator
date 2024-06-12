@@ -47,18 +47,18 @@ public class Stock {
 
     public void setPrice(int price) {
         this.price = price;
-        addPriceToHistory(price); // 가격 변경 시 기록 추가
+        addPriceToHistory(price);
     }
 
     private void addPriceToHistory(int price) {
         if (priceHistory.size() == 10) {
-            priceHistory.removeFirst(); // 기록이 10개인 경우 첫 번째 기록 삭제
+            priceHistory.removeFirst();
         }
-        priceHistory.add(new PriceRecord(price, LocalDateTime.now())); // 새로운 가격 기록 추가
+        priceHistory.add(new PriceRecord(price, LocalDateTime.now()));
     }
 
     public List<PriceRecord> getPriceHistory() {
-        return Collections.unmodifiableList(priceHistory); // 가격 기록 반환
+        return Collections.unmodifiableList(priceHistory);
     }
 
     public void setStat(boolean stat) {
@@ -86,18 +86,15 @@ public class Stock {
     }
 
     public void applyPositiveNewsEffect() {
-        // 주식에 긍정적인 뉴스 효과를 적용하는 로직 구현
-        setNewsMultiplier(1.2);  // 예시: 주가 변동률을 1.2배로 증가
+        setNewsMultiplier(1.2);
     }
 
     public void applyNegativeNewsEffect() {
-        // 주식에 부정적인 뉴스 효과를 적용하는 로직 구현
-        setNewsMultiplier(0.8);  // 예시: 주가 변동률을 0.8배로 감소
+        setNewsMultiplier(0.8);
     }
 
     public void removeNewsEffect() {
-        // 주식에 적용된 뉴스 효과를 제거하는 로직 구현
-        setNewsMultiplier(1.0);  // 예시: 주가 변동률을 기본 값으로 재설정
+        setNewsMultiplier(1.0);
     }
 
     private double newsMultiplier = 1.0;

@@ -25,7 +25,7 @@ public class PartTime extends javax.swing.JFrame {
     private StringBuilder partMessage;
     private javax.swing.JButton backButton;
     private javax.swing.JButton startButton;
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> partList;
     private javax.swing.JLabel titleText;
     private javax.swing.JLabel haveCount;
     private javax.swing.JLabel countTimer;
@@ -82,11 +82,11 @@ public class PartTime extends javax.swing.JFrame {
         if (user.getPartTimeCount() == 0) {
             startButton.setBackground(Color.GRAY);
             startButton.setEnabled(false);
-            jComboBox1.setEnabled(false);
+            partList.setEnabled(false);
             SwingUtilities.invokeLater(() -> exText.setText("<html><span style='color:red;'>보유한 알바 가능 횟수가 없습니다!!<br>충전이 된 후 시도하세요!!<br/></span></html>"));
         } else {
             startButton.setBackground(Color.RED);
-            jComboBox1.setEnabled(true);
+            partList.setEnabled(true);
             startButton.setEnabled(true);
             exText.setText("");
         }
@@ -136,9 +136,7 @@ public class PartTime extends javax.swing.JFrame {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void initComponents() {
-
         allPanel = new javax.swing.JPanel();
         backButton = new javax.swing.JButton();
         titlePanel = new javax.swing.JPanel();
@@ -148,11 +146,12 @@ public class PartTime extends javax.swing.JFrame {
         exText = new javax.swing.JLabel();
         answerTimer = new javax.swing.JLabel();
         answerText = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        partList = new javax.swing.JComboBox<>();
         textPanel = new javax.swing.JPanel();
         startButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("CCSS : Capital Conquest : Stock Saga : PartTime");
 
         allPanel.setBackground(new java.awt.Color(140, 255, 187));
         allPanel.setFont(new java.awt.Font("한컴 고딕", 1, 14)); // NOI18N
@@ -195,12 +194,12 @@ public class PartTime extends javax.swing.JFrame {
         timerThread.start(); // 타이머 시작
         countTimer.setText(String.format("알바 횟수 추가까지 남은 시간 : %02d분 %02d초", countMin, countSec));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "포켓몬 도감 맞추기", "단어 맞추기", "산술 연산"}));
-        jComboBox1.setSelectedIndex(-1);
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+        partList.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "포켓몬 도감 맞추기", "단어 맞추기", "산술 연산"}));
+        partList.setSelectedIndex(-1);
+        partList.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                int selectedIndex = jComboBox1.getSelectedIndex();
+                int selectedIndex = partList.getSelectedIndex();
                 partTimeEx(selectedIndex);
             }
         });
@@ -214,7 +213,7 @@ public class PartTime extends javax.swing.JFrame {
         answerText.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                int selectedIndex = jComboBox1.getSelectedIndex();
+                int selectedIndex = partList.getSelectedIndex();
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     switch (selectedIndex) {
                         case 0:
@@ -273,7 +272,7 @@ public class PartTime extends javax.swing.JFrame {
         startButton.setText("시작하기");
         startButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                startButtonActionPerformed(evt);
             }
         });
 
@@ -300,7 +299,7 @@ public class PartTime extends javax.swing.JFrame {
                                                 .addGap(272, 272, 272))
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 414, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(partList, javax.swing.GroupLayout.PREFERRED_SIZE, 414, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                                                                 .addComponent(startButton)
                                                                 .addGap(18, 18, 18)
@@ -325,7 +324,7 @@ public class PartTime extends javax.swing.JFrame {
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(countTimer)
                                                 .addGap(59, 59, 59)
-                                                .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(partList, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
                                                 .addComponent(textPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addContainerGap(63, Short.MAX_VALUE))
@@ -349,41 +348,28 @@ public class PartTime extends javax.swing.JFrame {
         pack();
     }
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {
-        int selectedIndex = jComboBox1.getSelectedIndex();
-        switch (selectedIndex) {
-            case 0:
-                checkAnswer();
-            case 1:
-                checkAnswer();
-            case 2:
-
-                checkArthAnswer();
-        }
-    }
-
     private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {
         this.setVisible(false);
         client.setVisible(true);
     }
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
-        int selectedIndex = jComboBox1.getSelectedIndex();
+    private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {
+        int selectedIndex = partList.getSelectedIndex();
 
         switch (selectedIndex) {
             case 0:
                 startButton.setEnabled(false);
-                jComboBox1.setEnabled(false);
+                partList.setEnabled(false);
                 poketmonStart();
                 break;
             case 1:
                 startButton.setEnabled(false);
-                jComboBox1.setEnabled(false);
+                partList.setEnabled(false);
                 wordStart();
                 break;
             case 2:
                 startButton.setEnabled(false);
-                jComboBox1.setEnabled(false);
+                partList.setEnabled(false);
                 arthStart();
                 break;
             default:
@@ -435,7 +421,7 @@ public class PartTime extends javax.swing.JFrame {
     }
 
     private void checkAnswer() {
-        int selectedIndex = jComboBox1.getSelectedIndex();
+        int selectedIndex = partList.getSelectedIndex();
         partMessage = new StringBuilder();
         String userAnswer = answerText.getText().trim();
         boolean isCorrect = false;
@@ -457,7 +443,7 @@ public class PartTime extends javax.swing.JFrame {
             partMessage.append("<html><span style='color:#FF6666;'>알바를 실패하여 사장님에게 쫒겨났습니다!!<br><br>더 연습하세요!!<br/><br/></span></html>");
         }
 
-        timer.stop(); // 타이머 정지
+        timer.stop();
         SwingUtilities.invokeLater(() -> exText.setText(partMessage.toString()));
         user.setPartTimeCount(user.getPartTimeCount() - 1);
         if (isCorrect) {
@@ -465,10 +451,9 @@ public class PartTime extends javax.swing.JFrame {
         }
 
         setUser(user);
-        jComboBox1.setSelectedIndex(-1);
+        partList.setSelectedIndex(-1);
         answerTimer.setVisible(false);
         updateStartButton();
-        System.out.println(user.getPartTimeCount());
         answerText.setText("");
         answerText.setVisible(false);
     }
@@ -476,10 +461,10 @@ public class PartTime extends javax.swing.JFrame {
     public boolean containsAlphabets(String text) {
         for (int i = 0; i < text.length(); i++) {
             if (Character.isLetter(text.charAt(i))) {
-                return true; // 문자가 포함되어 있으면 true 반환
+                return true;
             }
         }
-        return false; // 문자가 포함되어 있지 않으면 false 반환
+        return false;
     }
 
     private void checkArthAnswer() {
@@ -499,7 +484,7 @@ public class PartTime extends javax.swing.JFrame {
             partMessage.append("<html><span style='color:#FF6666;'>알바를 실패하여 사장님에게 쫒겨났습니다!!<br><br>더 연습하세요!!<br/><br/></span></html>");
         }
 
-        timer.stop(); // 타이머 정지
+        timer.stop();
         SwingUtilities.invokeLater(() -> exText.setText(partMessage.toString()));
         user.setPartTimeCount(user.getPartTimeCount() - 1);
         if (isCorrect) {
@@ -507,7 +492,7 @@ public class PartTime extends javax.swing.JFrame {
         }
 
         setUser(user);
-        jComboBox1.setSelectedIndex(-1);
+        partList.setSelectedIndex(-1);
         answerTimer.setVisible(false);
         updateStartButton();
         System.out.println(user.getPartTimeCount());
@@ -515,9 +500,8 @@ public class PartTime extends javax.swing.JFrame {
         answerText.setVisible(false);
     }
 
-
     private void startTimer() {
-        timeLimitSeconds = 30; // 초기화
+        timeLimitSeconds = 30;
         updateTimer();
         timer = new Timer(1000, new ActionListener() {
             @Override
@@ -531,7 +515,7 @@ public class PartTime extends javax.swing.JFrame {
                     setUser(user);
                     updateStartButton();
                     answerText.setVisible(false);
-                    jComboBox1.setEnabled(true);
+                    partList.setEnabled(true);
                     startButton.setEnabled(true);
                     answerTimer.setVisible(false);
                 }
@@ -540,7 +524,6 @@ public class PartTime extends javax.swing.JFrame {
         timer.start();
         answerTimer.setVisible(true);
     }
-
 
     private void updateTimer() {
         int minutes = timeLimitSeconds / 60;

@@ -22,6 +22,7 @@ public class SetNickname extends javax.swing.JFrame {
         nameField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("CCSS : Capital Conquest : Stock Saga : Set Nickname");
 
         allPanel.setBackground(new java.awt.Color(255, 255, 255));
         allPanel.setPreferredSize(new java.awt.Dimension(761, 524));
@@ -51,7 +52,7 @@ public class SetNickname extends javax.swing.JFrame {
         });
         nameField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                nameFieldActionPerformed(evt);
             }
         });
 
@@ -106,20 +107,20 @@ public class SetNickname extends javax.swing.JFrame {
         allPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                allPanel.requestFocusInWindow(); // JPanel로 포커스 이동
+                allPanel.requestFocusInWindow();
             }
         });
 
         nameField.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                nameField.requestFocusInWindow(); // JPanel로 포커스 이동
+                nameField.requestFocusInWindow();
             }
         });
         pack();
     }
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void nameFieldActionPerformed(java.awt.event.ActionEvent evt) {
         String input = nameField.getText();
         if (!input.matches("[A-Za-z0-9]{1,10}")) {
             JOptionPane.showMessageDialog(this, "닉네임 조건이 올바르지 않습니다!!\n조건 : 영어 대소문자, 숫자로 조합된 10글자","", JOptionPane.ERROR_MESSAGE);
@@ -127,11 +128,14 @@ public class SetNickname extends javax.swing.JFrame {
         else {
             String filePath = System.getProperty("user.dir") + "/User.txt";
             try {
-                // 파일에 닉네임 저장
                 FileWriter writer = new FileWriter(filePath);
-                writer.write(input);
+                writer.write(input + "\n");
+                writer.write("10000\n");
+                writer.write("3\n");
                 writer.close();
                 JOptionPane.showMessageDialog(this, "닉네임이 저장되었습니다.", "", JOptionPane.INFORMATION_MESSAGE);
+                setVisible(false);
+                dispose();
             } catch (IOException e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(this, "닉네임을 저장하는 도중 오류가 발생했습니다.", "", JOptionPane.ERROR_MESSAGE);

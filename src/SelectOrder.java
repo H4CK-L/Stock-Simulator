@@ -43,6 +43,7 @@ public class SelectOrder extends javax.swing.JFrame {
         buyButton = new javax.swing.JToggleButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("CCSS : Capital Conquest : Stock Saga : Order");
 
         allPanel.setBackground(new java.awt.Color(153, 204, 255));
         allPanel.setPreferredSize(new java.awt.Dimension(761, 524));
@@ -53,7 +54,7 @@ public class SelectOrder extends javax.swing.JFrame {
         backButton.setToolTipText("");
         backButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                backButtonActionPerformed(evt);
             }
         });
 
@@ -61,7 +62,7 @@ public class SelectOrder extends javax.swing.JFrame {
         sectorButton.setText("분야");
         sectorButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton1ActionPerformed(evt);
+                sectorButtonActionPerformed(evt);
             }
         });
 
@@ -72,7 +73,7 @@ public class SelectOrder extends javax.swing.JFrame {
         selectSector.setFocusable(false);
         selectSector.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
+                selectSectorActionPerformed(evt);
             }
         });
 
@@ -80,7 +81,7 @@ public class SelectOrder extends javax.swing.JFrame {
         selectStock.setSelectedIndex(-1);
         selectStock.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox2ActionPerformed(evt);
+                selectStockActionPerformed(evt);
             }
         });
 
@@ -89,7 +90,7 @@ public class SelectOrder extends javax.swing.JFrame {
         contextField.setText("수량. . .");
         contextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                contextFieldActionPerformed(evt);
             }
         });
         contextField.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -113,7 +114,7 @@ public class SelectOrder extends javax.swing.JFrame {
         sellButton.setText("시장가 매수");
         sellButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton2ActionPerformed(evt);
+                sellButtonActionPerformed(evt);
             }
         });
 
@@ -122,7 +123,7 @@ public class SelectOrder extends javax.swing.JFrame {
         buyButton.setText("시장가 매도");
         buyButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton4ActionPerformed(evt);
+                buyButtonActionPerformed(evt);
             }
         });
 
@@ -192,7 +193,7 @@ public class SelectOrder extends javax.swing.JFrame {
         pack();
     }
 
-    private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void sectorButtonActionPerformed(java.awt.event.ActionEvent evt) {
         selectSector.setVisible(sectorButton.isSelected());
         if (!sectorButton.isSelected()) {
             selectStock.setVisible(false);
@@ -200,7 +201,7 @@ public class SelectOrder extends javax.swing.JFrame {
         selectStock.setSelectedIndex(-1);
     }
 
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void selectSectorActionPerformed(java.awt.event.ActionEvent evt) {
         if (selectSector.getSelectedIndex() != -1) {
             if (isSellMode) {
                 updateSellComboBox();
@@ -216,16 +217,16 @@ public class SelectOrder extends javax.swing.JFrame {
         }
     }
 
-    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void selectStockActionPerformed(java.awt.event.ActionEvent evt) {
         checkComboBoxSelection();
     }
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {
         this.setVisible(false);
         client.setVisible(true);
     }
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void contextFieldActionPerformed(java.awt.event.ActionEvent evt) {
         String quantityText = contextField.getText();
         try {
             int quantity = Integer.parseInt(quantityText);
@@ -235,11 +236,11 @@ public class SelectOrder extends javax.swing.JFrame {
                 sellStock(quantity);
             }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Invalid quantity input.");
+            JOptionPane.showMessageDialog(this, "잘못된 수량이 입력되었습니다.");
         }
     }
 
-    private void jToggleButton2ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void sellButtonActionPerformed(java.awt.event.ActionEvent evt) {
         isSellMode = false;
         if(sellButton.isSelected()) {
             sectorButton.setEnabled(true);
@@ -253,7 +254,7 @@ public class SelectOrder extends javax.swing.JFrame {
         updateComboBoxes();
     }
 
-    private void jToggleButton4ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void buyButtonActionPerformed(java.awt.event.ActionEvent evt) {
         isSellMode = true;
         if(buyButton.isSelected()) {
             sectorButton.setEnabled(true);
@@ -275,14 +276,14 @@ public class SelectOrder extends javax.swing.JFrame {
         selectSector.removeAllItems();
         selectStock.removeAllItems();
 
-        if (isSellMode) { // 매도 모드
+        if (isSellMode) {
             userStockMap = user.getStockPortfolio().entrySet().stream()
                     .collect(Collectors.groupingBy(
                             entry -> getSectorByStock(entry.getKey()).getName(),
                             Collectors.mapping(entry -> entry.getKey().getName(), Collectors.toList())
                     ));
             userStockMap.keySet().forEach(sectorName -> selectSector.addItem(sectorName));
-        } else { // 매수 모드
+        } else {
             sectors.forEach(sector -> selectSector.addItem(sector.getName()));
         }
 
@@ -309,7 +310,7 @@ public class SelectOrder extends javax.swing.JFrame {
         return sectors.stream()
                 .filter(sector -> sector.getStocks().contains(stock))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Sector not found for stock: " + stock.getName()));
+                .orElseThrow(() -> new IllegalArgumentException("해당 주식의 분야를 찾을 수 없습니다.: " + stock.getName()));
     }
 
     private void buyStock(int quantity) {

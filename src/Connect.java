@@ -11,7 +11,6 @@ public class Connect extends javax.swing.JFrame {
         initComponents();
     }
 
-    @SuppressWarnings("unchecked")
     private void initComponents() {
 
         allPanel = new javax.swing.JPanel();
@@ -20,6 +19,7 @@ public class Connect extends javax.swing.JFrame {
         pressKeyText = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("CCSS : Capital Conquest : Stock Saga");
 
         allPanel.setBackground(new java.awt.Color(255, 255, 255));
 

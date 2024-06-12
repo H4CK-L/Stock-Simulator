@@ -73,11 +73,11 @@ public class Ranking extends javax.swing.JFrame {
     }
 
     private int calculateTotalAssets(User user) {
-        int totalAssets = user.getMoney();  // 현금
+        int totalAssets = user.getMoney();
         for (Map.Entry<Stock, Integer> entry : user.getStockPortfolio().entrySet()) {
             Stock stock = entry.getKey();
             int quantity = entry.getValue();
-            totalAssets += quantity * user.getStockPrice(stock);  // 주식 가치 합산
+            totalAssets += quantity * user.getStockPrice(stock);
         }
         return totalAssets;
     }
@@ -91,6 +91,8 @@ public class Ranking extends javax.swing.JFrame {
         titleText = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("CCSS : Capital Conquest : Stock Saga : Ranking");
+
         setPreferredSize(new java.awt.Dimension(600, 400));
 
         timePanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -177,7 +179,7 @@ public class Ranking extends javax.swing.JFrame {
         );
 
         pack();
-        setSize(600, 400);  // Set the initial size of the frame
-        setLocationRelativeTo(null);  // Center the frame on the screen
+        setSize(600, 400);
+        setLocationRelativeTo(null);
     }
 }
