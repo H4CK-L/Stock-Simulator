@@ -1,0 +1,3 @@
+<html>포켓몬 도감의 설명을 읽고<br>어떤 포켓몬인지 맞추는 알바입니다.<br>시작하기 버튼을 누르면 시작합니다!!<br><span style='color:#0033CC; font-size:11px;'>제한시간 : 30초<br/><br/><br/></span></html>
+<html>단어의 설명을 읽고<br>어떤 단어인지 맞추는 알바입니다.<br>시작하기 버튼을 누르면 시작합니다!!<br><span style='color:#0033CC; font-size:11px;'>제한시간 : 30초<br/><br/><br/></span></html>
+<html>출력되는 식의 결과값을 맞추는 알바입니다.<br>시작하기 버튼을 누르면 시작합니다!!<br><span style='color:#0033CC; font-size:11px;'>제한시간 : 30초<br/><br/><br/></span></html>
