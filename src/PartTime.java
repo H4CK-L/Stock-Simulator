@@ -105,7 +105,6 @@ public class PartTime extends javax.swing.JFrame {
                             countSec = 0;
                             if (user.getPartTimeCount() < 3) {
                                 user.setPartTimeCount(user.getPartTimeCount() + 1);
-                                System.out.println(user.getPartTimeCount());
                                 haveCount.setText("알바 가능 횟수 : " + user.getPartTimeCount());
                                 SwingUtilities.invokeLater(new Runnable() {
                                     @Override
