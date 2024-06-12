@@ -14,7 +14,7 @@ public class CorporateInfo extends javax.swing.JFrame {
     private ArrayList<String> gameName = new ArrayList<>();
     private ArrayList<String> gameEx = new ArrayList<>();
     private ArrayList<String> selectedCompanies;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton backButton;
     private javax.swing.JComboBox<String> selectSector;
     private javax.swing.JComboBox<String> selectStock;
     private javax.swing.JLabel titleText;
@@ -50,7 +50,7 @@ public class CorporateInfo extends javax.swing.JFrame {
     private void initComponents() {
 
         allPanel = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        backButton = new javax.swing.JButton();
         titlePanel = new javax.swing.JPanel();
         titleText = new javax.swing.JLabel();
         selectSector = new javax.swing.JComboBox<>();
@@ -63,13 +63,13 @@ public class CorporateInfo extends javax.swing.JFrame {
         allPanel.setBackground(new java.awt.Color(244, 221, 244));
         allPanel.setPreferredSize(new java.awt.Dimension(761, 524));
 
-        jButton1.setBackground(new java.awt.Color(255, 171, 255));
-        jButton1.setFont(new java.awt.Font("한컴 고딕", 1, 14)); // NOI18N
-        jButton1.setText("뒤로가기");
-        jButton1.setToolTipText("");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        backButton.setBackground(new java.awt.Color(255, 171, 255));
+        backButton.setFont(new java.awt.Font("한컴 고딕", 1, 14)); // NOI18N
+        backButton.setText("뒤로가기");
+        backButton.setToolTipText("");
+        backButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                backButtonActionPerformed(evt);
             }
         });
 
@@ -97,7 +97,7 @@ public class CorporateInfo extends javax.swing.JFrame {
         selectSector.setSelectedIndex(-1);
         selectSector.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
+                selectSectorActionPerformed(evt);
             }
         });
 
@@ -105,7 +105,7 @@ public class CorporateInfo extends javax.swing.JFrame {
         selectStock.setSelectedIndex(-1);
         selectStock.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox2ActionPerformed(evt);
+                selectStockActionPerformed(evt);
             }
         });
 
@@ -142,7 +142,7 @@ public class CorporateInfo extends javax.swing.JFrame {
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                                 .addComponent(titlePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGap(247, 247, 247)
-                                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                                         .addComponent(selectStock, javax.swing.GroupLayout.PREFERRED_SIZE, 353, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -156,7 +156,7 @@ public class CorporateInfo extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
                 jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(backButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))
                         .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addContainerGap()
@@ -188,33 +188,31 @@ public class CorporateInfo extends javax.swing.JFrame {
         pack();
 
     }
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void selectSectorActionPerformed(java.awt.event.ActionEvent evt) {
         int selectedIndex = selectSector.getSelectedIndex();
         selectedCompanies = new ArrayList<>();
         switch (selectedIndex) {
-            case 0: // 기술 분야
+            case 0:
                 selectedCompanies = techName;
                 break;
-            case 1: // 예술 분야
+            case 1:
                 selectedCompanies = artName;
                 break;
-            case 2: // 게임 분야
+            case 2:
                 selectedCompanies = gameName;
                 break;
             default:
                 break;
         }
 
-        // 기업 목록을 jComboBox2에 설정
         selectStock.setModel(new javax.swing.DefaultComboBoxModel<>(selectedCompanies.toArray(new String[0])));
         selectStock.setSelectedIndex(-1);
     }
 
-    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {
-        // jComboBox2에서 기업 선택 시, 해당 기업의 설명을 jLabel2에 출력
+    private void selectStockActionPerformed(java.awt.event.ActionEvent evt) {
         String selectedCompany = (String) selectStock.getSelectedItem();
         ArrayList<String> selectedCompanyEx = null;
-        // 선택된 기업의 설명 찾기
+
         if (techName.contains(selectedCompany)) {
             selectedCompanyEx = techEx;
         } else if (artName.contains(selectedCompany)) {
@@ -222,7 +220,7 @@ public class CorporateInfo extends javax.swing.JFrame {
         } else if (gameName.contains(selectedCompany)) {
             selectedCompanyEx = gameEx;
         }
-        // 선택된 기업의 설명을 jLabel2에 출력
+
         if (selectedCompanyEx != null) {
             int index = selectedCompanies.indexOf(selectedCompany);
             String description = selectedCompanyEx.get(index);
@@ -232,7 +230,7 @@ public class CorporateInfo extends javax.swing.JFrame {
         }
     }
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void backButtonActionPerformed(java.awt.event.ActionEvent evt) {
         this.setVisible(false);
         client.setVisible(true);
     }

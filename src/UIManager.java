@@ -43,6 +43,10 @@ public class UIManager {
         });
     }
 
+    public SetNickname getSetNickname(){
+        return setNickname;
+    }
+
     public void setShop(User user){
         shop.setUser(user);
     }
@@ -55,7 +59,7 @@ public class UIManager {
     }
 
     public void setOrderUser(User user){
-        this.user = user; // Set the user field in UIManager
+        this.user = user;
         selectOrder.setUser(user);
     }
 

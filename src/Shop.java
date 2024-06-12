@@ -140,7 +140,7 @@ public class Shop extends javax.swing.JFrame {
 
         item1NamePanel.setPreferredSize(new java.awt.Dimension(181, 0));
 
-        item1Name.setText("jLabel3");
+        item1Name.setText("");
         item1Name.setToolTipText("");
         item1Name.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
@@ -161,7 +161,7 @@ public class Shop extends javax.swing.JFrame {
                                 .addContainerGap())
         );
 
-        item2Name.setText("jLabel3");
+        item2Name.setText("");
         item2Name.setToolTipText("");
         item2Name.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
@@ -184,7 +184,7 @@ public class Shop extends javax.swing.JFrame {
 
         item3NamePanel.setPreferredSize(new java.awt.Dimension(181, 0));
 
-        item3Name.setText("jLabel3");
+        item3Name.setText("");
         item3Name.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(item3NamePanel);
@@ -204,13 +204,13 @@ public class Shop extends javax.swing.JFrame {
                                 .addContainerGap())
         );
 
-        item1Ex.setText("jLabel6");
+        item1Ex.setText("");
         item1Ex.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         buy1.setText("구매");
         buy1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                buy1ActionPerformed(evt);
             }
         });
 
@@ -239,13 +239,13 @@ public class Shop extends javax.swing.JFrame {
 
         item2ExPanel.setPreferredSize(new java.awt.Dimension(216, 113));
 
-        item2Ex.setText("jLabel6");
+        item2Ex.setText("");
         item2Ex.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         buy2.setText("구매");
         buy2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                buy2ActionPerformed(evt);
             }
         });
 
@@ -274,13 +274,13 @@ public class Shop extends javax.swing.JFrame {
 
         item3ExPanel.setPreferredSize(new java.awt.Dimension(216, 113));
 
-        item3Ex.setText("jLabel8");
+        item3Ex.setText("");
         item3Ex.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         buy3.setText("구매");
         buy3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                buy3ActionPerformed(evt);
             }
         });
 
@@ -308,8 +308,8 @@ public class Shop extends javax.swing.JFrame {
         );
 
         refreshTimer.setFont(new java.awt.Font("한컴 고딕", 1, 13)); // NOI18N
-        TimerThread timerThread = new TimerThread(); // TimerThread 객체 생성
-        timerThread.start(); // 타이머 시작
+        TimerThread timerThread = new TimerThread();
+        timerThread.start();
         refreshTimer.setText(String.format("상점 갱신까지 남은 시간 : %02d분 %02d초", countMin, countSec));
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(item3Panel);
@@ -469,21 +469,20 @@ public class Shop extends javax.swing.JFrame {
         item2Ex.setText("<html>" + item2[1] + "<br>가격: " + item2[2] + "</html>");
         item3Ex.setText("<html>" + item3[1] + "<br>가격: " + item3[2] + "</html>");
 
-        // 구매 버튼 다시 활성화
         buy1.setEnabled(true);
         buy2.setEnabled(true);
         buy3.setEnabled(true);
     }
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void buy1ActionPerformed(java.awt.event.ActionEvent evt) {
         purchaseItem(0, buy1);
     }
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void buy2ActionPerformed(java.awt.event.ActionEvent evt) {
         purchaseItem(1, buy2);
     }
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
+    private void buy3ActionPerformed(java.awt.event.ActionEvent evt) {
         purchaseItem(2, buy3);
     }
 
@@ -503,7 +502,7 @@ public class Shop extends javax.swing.JFrame {
                 user.setMoney(user.getMoney() - itemPrice);
                 user.addItem(itemName);
                 JOptionPane.showMessageDialog(this, "아이템을 성공적으로 구매하였습니다.");
-                button.setEnabled(false); // 구매 버튼 비활성화
+                button.setEnabled(false);
             } else {
                 JOptionPane.showMessageDialog(this, "돈이 부족하여 아이템을 구매할 수 없습니다.");
             }

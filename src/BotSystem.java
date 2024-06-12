@@ -21,9 +21,8 @@ public class BotSystem {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
             while ((line = br.readLine()) != null) {
-                // 각 줄을 쉼표로 분리하여 닉네임과 돈을 가져옴
                 String[] parts = line.split(",");
-                if (parts.length == 2) { // 올바른 형식의 데이터인 경우만 처리
+                if (parts.length == 2) {
                     String name = parts[0].trim();
                     int money = Integer.parseInt(parts[1].trim());
                     botName.add(name);

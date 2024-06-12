@@ -57,43 +57,48 @@ public class Client extends JFrame {
     private JPanel optionPanel;
     private JPanel optionPanel2;
     private JPanel graphPanel;
-    private JPanel subpanel;
+    private JPanel subPanel;
     private JPanel newsPanel;
     private JPanel chartPanel;
     private JPanel newsTextPanel;
 
     public Client() {
-        newsManager = new News();
-        newsManager.loadNewsFromFile("PositiveNews.txt");
-        newsManager.loadNewsFromFile("NegativeNews.txt");
     }
 
     private void connecting(Client client) {
+        newsManager = new News();
         sectors = new ArrayList<>();
         sectors.add(new Sector("기술"));
         sectors.add(new Sector("예술"));
         sectors.add(new Sector("게임"));
         readStocksFromFile("stock.txt", sectors); // 주식 파일 불러오기
+        newsManager.loadNewsFromFile("PositiveNews.txt");
+        newsManager.loadNewsFromFile("NegativeNews.txt");
         uiManager = new UIManager(Client.this, sectors);
         sector = sectors.get(2);
         bot = new BotSystem();
-        uiManager.getConnect().setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // 창이 닫힐 때 자원을 해제하도록 설정
+        uiManager.getConnect().setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         uiManager.getConnect().addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-                // Connect 창이 닫힐 때 호출될 메소드
                 File file = new File("User.txt");
                 if (!file.exists()) {
                     uiManager.viewSetNickname();
-                    user = new User("User.txt");
-                    assets = new Assets(user, sectors);
-                    bot.setUser(user);
-                    ranking = new Ranking(user, bot);
-                    uiManager.setOrderUser(user);
-                    uiManager.setAssets(assets);
-                    uiManager.setRanking(ranking);
-                    uiManager.setShop(user);
-                    initComponents(client);
+                    uiManager.getSetNickname().setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    uiManager.getSetNickname().addWindowListener(new WindowAdapter() {
+                        @Override
+                        public void windowClosed(WindowEvent e) {
+                            user = new User("User.txt");
+                            assets = new Assets(user, sectors);
+                            bot.setUser(user);
+                            ranking = new Ranking(user, bot);
+                            uiManager.setOrderUser(user);
+                            uiManager.setAssets(assets);
+                            uiManager.setRanking(ranking);
+                            uiManager.setShop(user);
+                            initComponents(client);
+                        }
+                    });
                 } else {
                     user = new User("User.txt");
                     assets = new Assets(user, sectors);
@@ -135,7 +140,7 @@ public class Client extends JFrame {
                 return;
             }
         }
-        // If the sector does not exist, create it and add the stock
+
         sector = new Sector(sectorName);
         sector.addStock(stock);
         sectors.add(sector);
@@ -162,27 +167,27 @@ public class Client extends JFrame {
         corporateButton = new JButton();
         reloadNews = new JButton();
         graphPanel = new JPanel();
-        subpanel = new JPanel();
+        subPanel = new JPanel();
         showTime = new JLabel();
         chartPanel = new JPanel();
         newsPanel = new JPanel();
         showNewsTime = new JLabel();
-        newsTextPanel = new JPanel();  // 신문 패널 추가
+        newsTextPanel = new JPanel();
 
         // 신문 레이블 생성
         newsLabel = new JLabel();
-        newsLabel.setVerticalAlignment(SwingConstants.TOP); // 수직 정렬
-        newsLabel.setHorizontalAlignment(SwingConstants.LEFT); // 수평 정렬
-        newsLabel.setFont(new Font("한컴 고딕", 0, 13)); // 폰트 설정
+        newsLabel.setVerticalAlignment(SwingConstants.TOP);
+        newsLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        newsLabel.setFont(new Font("한컴 고딕", 0, 13));
         newsLabel.setText("<html>신문 내용이 여기에 표시됩니다.</html>");
         newsTextPanel.add(newsLabel);
 
         // JFreeChart 초기화
-        series = new TimeSeries("Stock Prices"); // 기존 시리즈는 제거
-        XYDataset dataset = new TimeSeriesCollection(); // 데이터셋을 빈 데이터셋으로 초기화
+        series = new TimeSeries("Stock Prices");
+        XYDataset dataset = new TimeSeriesCollection();
         chart = createChart(dataset);
         ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new Dimension(350, 250)); // 차트 패널 크기 조정
+        chartPanel.setPreferredSize(new Dimension(350, 250));
         graphPanel.setLayout(new BorderLayout());
         graphPanel.add(chartPanel, BorderLayout.CENTER);
 
@@ -363,7 +368,7 @@ public class Client extends JFrame {
                         .addComponent(chartPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        subpanel.setBackground(new Color(153, 153, 153));
+        subPanel.setBackground(new Color(153, 153, 153));
         showTime.setFont(new Font("한컴 고딕", 1, 14)); // NOI18N
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         showTime.setText("주가 차트 | 현재 시각 : " + formattedDateTime + " | 주가 변동까지 남은 시간 : " + String.format("%02d분 %02d초", stockMin, stockSec));
@@ -391,8 +396,8 @@ public class Client extends JFrame {
 
         stockPrice.setVerticalAlignment(SwingConstants.TOP);
         stockPrice.setFont(new Font("한컴 고딕", 1, 14));
-        GroupLayout jPanel5Layout = new GroupLayout(subpanel);
-        subpanel.setLayout(jPanel5Layout);
+        GroupLayout jPanel5Layout = new GroupLayout(subPanel);
+        subPanel.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
                 jPanel5Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addGroup(jPanel5Layout.createSequentialGroup()
@@ -417,9 +422,9 @@ public class Client extends JFrame {
 
         newsPanel.setBackground(new Color(250, 250, 250));
 
-        showNewsTime.setFont(new Font("한컴 고딕", 1, 14)); // NOI18N
-        TimerThread timerThread = new TimerThread(sectors, newsManager); // TimerThread 객체 생성
-        timerThread.start(); // 타이머 시작
+        showNewsTime.setFont(new Font("한컴 고딕", 1, 14));
+        TimerThread timerThread = new TimerThread(sectors, newsManager);
+        timerThread.start();
         showNewsTime.setText(String.format("Daily News! | 신문 갱신까지 남은 시간 : %02d분 %02d초", countNewsMin, countNewsSec));
 
         newsTextPanel.setBackground(new Color(255, 153, 102));
@@ -469,17 +474,17 @@ public class Client extends JFrame {
                     case 0:
                         sector = sectors.get(selectedIndex);
                         changeStockContent();
-                        updateChart(); // 차트 업데이트
+                        updateChart();
                         break;
                     case 1:
                         sector = sectors.get(selectedIndex);
                         changeStockContent();
-                        updateChart(); // 차트 업데이트
+                        updateChart();
                         break;
                     case 2:
                         sector = sectors.get(selectedIndex);
                         changeStockContent();
-                        updateChart(); // 차트 업데이트
+                        updateChart();
                         break;
                 }
                 stockComboBoxActionPerformed(evt);
@@ -509,7 +514,7 @@ public class Client extends JFrame {
                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                         .addComponent(graphPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(subpanel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(subPanel, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(newsPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGroup(jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                         .addGroup(jPanel1Layout.createSequentialGroup()
@@ -530,7 +535,7 @@ public class Client extends JFrame {
                                         .addGroup(jPanel1Layout.createSequentialGroup()
                                                 .addComponent(graphPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(subpanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(subPanel, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                                 .addGap(18, 18, 18)
                                                 .addComponent(newsPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                 .addGap(22, 22, 22))
@@ -580,7 +585,6 @@ public class Client extends JFrame {
     }
 
     private void reloadStockActionPerformed(ActionEvent evt) {
-        // 주가 갱신 로직
         changeStockContent();
         updateChart();
     }
@@ -607,7 +611,6 @@ public class Client extends JFrame {
     }
 
     private void reloadNewsActionPerformed(ActionEvent evt) {
-        // 신문 갱신 로직
         newsLabel.repaint();
     }
 
@@ -724,16 +727,15 @@ public class Client extends JFrame {
         List<String> currentNews = newsManager.getRandomNews(3);
         StringBuilder newsContent = new StringBuilder("<html>");
         for (String news : currentNews) {
-            if (newsManager.getNegativeNews().contains(news)) {  // 부정적인 뉴스
+            if (newsManager.getNegativeNews().contains(news)) {
                 newsContent.append("<span style='color:red;'>").append(news).append("</span><br/><br/>");
-            } else if (newsManager.getPositiveNews().contains(news)) {  // 긍정적인 뉴스
+            } else if (newsManager.getPositiveNews().contains(news)) {
                 newsContent.append("<span style='color:green;'>").append(news).append("</span><br/><br/>");
             }
         }
         newsContent.append("</html>");
         newsLabel.setText(newsContent.toString());
 
-        // 주가 변동 설정
         for (Sector sector : sectors) {
             for (Stock stock : sector.getStocks()) {
                 stock.removeNewsEffect();
@@ -744,11 +746,6 @@ public class Client extends JFrame {
                 applyNewsEffect(news, true);
             } else if (newsManager.getNegativeNews().contains(news)) {
                 applyNewsEffect(news, false);
-            }
-        }
-        for (Sector sector : sectors) {
-            for (Stock stock : sector.getStocks()) {
-                System.out.println("Stock: " + stock.getName() + ", Current Price: " + stock.getPrice() + ", Multiplier: " + stock.getNewsMultiplier());
             }
         }
     }
@@ -775,13 +772,7 @@ public class Client extends JFrame {
 
     private JFreeChart createChart(XYDataset dataset) {
         JFreeChart chart = ChartFactory.createTimeSeriesChart(
-                "주가 그래프", // Chart title
-                "시간", // X-Axis Label
-                "가격", // Y-Axis Label
-                dataset,
-                true, // Show legend
-                true, // Use tooltips
-                false // Configure chart to generate URLs?
+                "주가 그래프", "시간", "가격", dataset, true, true, false
         );
 
         XYPlot plot = (XYPlot) chart.getPlot();
@@ -802,7 +793,6 @@ public class Client extends JFrame {
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(true, false);
         plot.setRenderer(renderer);
 
-        // 한글 폰트 설정
         Font font = new Font("한컴 고딕", Font.BOLD, 13);
         chart.getTitle().setFont(font);
         plot.getDomainAxis().setLabelFont(font);
@@ -815,16 +805,16 @@ public class Client extends JFrame {
     }
 
     private void updateChart() {
-        TimeSeriesCollection dataset = new TimeSeriesCollection(); // 새로운 데이터셋 생성
+        TimeSeriesCollection dataset = new TimeSeriesCollection();
         for (Stock stock : sector.getStocks()) {
             TimeSeries series = new TimeSeries(stock.getName());
             List<Stock.PriceRecord> priceHistory = stock.getPriceHistory();
             for (Stock.PriceRecord record : priceHistory) {
                 series.addOrUpdate(new Minute(record.getTime().getMinute(), record.getTime().getHour(), record.getTime().getDayOfMonth(), record.getTime().getMonthValue(), record.getTime().getYear()), record.getPrice());
             }
-            dataset.addSeries(series); // 각 주식의 시리즈를 데이터셋에 추가
+            dataset.addSeries(series);
         }
-        chart.getXYPlot().setDataset(dataset); // 차트의 데이터셋을 업데이트된 데이터셋으로 설정
+        chart.getXYPlot().setDataset(dataset);
     }
 
 
@@ -845,7 +835,7 @@ public class Client extends JFrame {
                 formatter = DateTimeFormatter.ofPattern("hh : mm : ss a", Locale.US);
                 formattedDateTime = now.format(formatter);
                 try {
-                    Thread.sleep(1000); // 1초 대기
+                    Thread.sleep(1000);
 
                     if (stockSec == 0) {
                         if (stockMin == 0) {

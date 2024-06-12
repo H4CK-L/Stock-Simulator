@@ -118,10 +118,10 @@ public class Assets extends javax.swing.JFrame {
         for (Map.Entry<Stock, Integer> entry : user.getStockPortfolio().entrySet()) {
             Stock stock = entry.getKey();
             int quantity = entry.getValue();
-            double avgPrice = user.getStockPrice(stock); // 평균 구매 가격
-            double currentPrice = stock.getPrice(); // 현재 가격
-            double totalPurchasePrice = avgPrice * quantity; // 총 구매 가격
-            double totalCurrentPrice = currentPrice * quantity; // 현재 총 가격
+            double avgPrice = user.getStockPrice(stock);
+            double currentPrice = stock.getPrice();
+            double totalPurchasePrice = avgPrice * quantity;
+            double totalCurrentPrice = currentPrice * quantity;
 
             double priceChange = currentPrice - avgPrice;
             String priceChangeStr = String.format("%,.2f", Math.abs(priceChange));
@@ -214,7 +214,7 @@ public class Assets extends javax.swing.JFrame {
                 addRandomStocks(5);
                 break;
             case "랜덤 금액":
-                int randomMoney = random.nextInt(9901) + 100; // 100 ~ 10000
+                int randomMoney = random.nextInt(9901) + 100;
                 user.setMoney(user.getMoney() + randomMoney);
                 JOptionPane.showMessageDialog(this, "랜덤 금액: " + randomMoney + "원이 추가되었습니다.");
                 break;
@@ -226,7 +226,7 @@ public class Assets extends javax.swing.JFrame {
                 addRandomStocks(10);
                 break;
             case "고액 랜덤 금액":
-                int highRandomMoney = random.nextInt(19001) + 1000; // 1000 ~ 20000
+                int highRandomMoney = random.nextInt(19001) + 1000;
                 user.setMoney(user.getMoney() + highRandomMoney);
                 JOptionPane.showMessageDialog(this, "고액 랜덤 금액: " + highRandomMoney + "원이 추가되었습니다.");
                 break;
@@ -243,7 +243,7 @@ public class Assets extends javax.swing.JFrame {
             user.getItemInventory().remove(itemName);
         }
         updateUserInfo();
-        displayItemInventory(); // 업데이트된 아이템 목록을 다시 표시
+        displayItemInventory();
     }
 
     private void addRandomStocks(int quantity) {
